@@ -15,3 +15,4 @@ equal('Expect', str(b))
 # Bound
 equal('Expect', str(b('ExpectRest').a))
 equal('Expect', str(b('ExpectRest')['a']))
+equal(6, len(b('ExpectRest')))

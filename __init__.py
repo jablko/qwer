@@ -56,5 +56,6 @@ class qwer:
       __str__ = lambda ctx: ''.join(re.match(ctx.ctx.ctx[ctx.name], ctx.ctx.poiu).groups())
 
     __getitem__ = __getattr__
+    __len__ = lambda ctx: re.match(str(ctx.ctx), ctx.poiu).end()
 
   __str__ = lambda ctx: ''.join(map(str, ctx.args))
