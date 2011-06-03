@@ -53,9 +53,20 @@ class qwer:
       def __init__(ctx, name):
         ctx.name = name
 
-      __str__ = lambda ctx: ''.join(re.match(ctx.ctx.ctx[ctx.name], ctx.ctx.poiu).groups())
+      def __str__(ctx):
+        result = re.match(ctx.ctx.ctx[ctx.name], ctx.ctx.poiu)
+        if not result:
+          raise ValueError
+
+        return ''.join(result.groups())
 
     __getitem__ = __getattr__
-    __len__ = lambda ctx: re.match(str(ctx.ctx), ctx.poiu).end()
+
+    def __len__(ctx):
+      result = re.match(str(ctx.ctx), ctx.poiu)
+      if not result:
+        raise ValueError
+
+      return result.end()
 
   __str__ = lambda ctx: ''.join(map(str, ctx.args))

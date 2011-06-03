@@ -7,12 +7,32 @@ a = qwer('Expect')
 b = qwer(rule('a'))
 
 # Unbound
+
 equal('(Expect)', b.a)
 equal('(Expect)', b['a'])
 equal('Expect', b.bogus)
+
 equal('Expect', str(b))
 
 # Bound
+
+# str()
+
 equal('Expect', str(b('ExpectRest').a))
 equal('Expect', str(b('ExpectRest')['a']))
+
+try:
+  ok(False, str(b('Bogus').a))
+
+except ValueError:
+  ok(True)
+
+# len()
+
 equal(6, len(b('ExpectRest')))
+
+try:
+  ok(False, len(b('Bogus')))
+
+except ValueError:
+  ok(True)
