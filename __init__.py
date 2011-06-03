@@ -19,6 +19,13 @@ class rule:
 
   __getitem__ = __getattr__
 
+  def __str__(ctx):
+    result = ctx.namespace[ctx.name[0]]
+    for itm in ctx.name[1:]:
+      result = getattr(result, itm)
+
+    return str(result)
+
 # Unbound
 class qwer:
 
@@ -49,3 +56,5 @@ class qwer:
       __str__ = lambda ctx: ''.join(re.match(ctx.ctx.ctx[ctx.name], ctx.ctx.poiu).groups())
 
     __getitem__ = __getattr__
+
+  __str__ = lambda ctx: ''.join(map(str, ctx.args))

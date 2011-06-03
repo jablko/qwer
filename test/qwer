@@ -10,6 +10,7 @@ b = qwer(rule('a'))
 equal('(Expect)', b.a)
 equal('(Expect)', b['a'])
 equal('Expect', b.bogus)
+equal('Expect', str(b))
 
 # Bound
 equal('Expect', str(b('ExpectRest').a))
