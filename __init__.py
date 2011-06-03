@@ -1,4 +1,4 @@
-import sys
+import re, sys, untwisted
 
 __all__ = 'rule', 'qwer'
 
@@ -19,9 +19,33 @@ class rule:
 
   __getitem__ = __getattr__
 
+# Unbound
 class qwer:
+
+  # For .__hash__()
+  __metaclass__ = type
+
   def __init__(ctx, *args):
     ctx.args = args
 
   __getattr__ = lambda ctx, name: ''.join(itm[name] if isinstance(itm, rule) else itm for itm in ctx.args)
   __getitem__ = __getattr__
+
+  # Bound
+  class __call__:
+    class __metaclass__(type):
+      __get__ = untwisted.ctxual
+
+    def __init__(ctx, poiu):
+      ctx.poiu = poiu
+
+    class __getattr__:
+      class __metaclass__(type):
+        __get__ = untwisted.ctxual
+
+      def __init__(ctx, name):
+        ctx.name = name
+
+      __str__ = lambda ctx: ''.join(re.match(ctx.ctx.ctx[ctx.name], ctx.ctx.poiu).groups())
+
+    __getitem__ = __getattr__
