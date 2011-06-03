@@ -58,14 +58,14 @@ class qwer:
         if not result:
           raise ValueError
 
-        return int(result.group(1))
+        return int(filter(None, result.groups())[0])
 
       def __str__(ctx):
         result = re.match(ctx.ctx.ctx[ctx.name], ctx.ctx.poiu)
         if not result:
           raise ValueError
 
-        return ''.join(result.groups())
+        return ''.join(filter(None, result.groups()))
 
     __getitem__ = __getattr__
 

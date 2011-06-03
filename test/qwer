@@ -3,53 +3,49 @@
 from qwer import *
 from testify import *
 
-a = qwer('Expect')
-b = qwer(rule('a'))
+a = qwer('...')
+b = qwer('(?:a', rule('a'), ')?b', rule('a'))
 
 # Unbound
 
-equal('(Expect)', b.a)
-equal('(Expect)', b['a'])
-equal('Expect', b.bogus)
+equal('(?:a(...))?b(...)', b.a)
+equal('(?:a(...))?b(...)', b['a'])
+equal('(?:a...)?b...', b.bogus)
 
-equal('Expect', str(b))
+equal('(?:a...)?b...', str(b))
 
 # Bound
 
 # int()
 
-# TODO
-a = qwer('123')
-
-equal(123, int(b('123Rest').a))
-equal(123, int(b('123Rest')['a']))
+equal(123, int(b('b123xyz').a))
+equal(123, int(b('b123xyz')['a']))
+equal(123, int(b('a123b456xyz').a))
 
 try:
-  ok(False, int(b('Bogus').a))
+  ok(False, int(b('xyz').a))
 
 except ValueError:
   ok(True)
 
-# TODO
-a = qwer('Expect')
-
 # str()
 
-equal('Expect', str(b('ExpectRest').a))
-equal('Expect', str(b('ExpectRest')['a']))
+equal('abc', str(b('babcxyz').a))
+equal('abc', str(b('babcxyz')['a']))
+equal('abcdef', str(b('aabcbdefxyz').a))
 
 try:
-  ok(False, str(b('Bogus').a))
+  ok(False, str(b('xyz').a))
 
 except ValueError:
   ok(True)
 
 # len()
 
-equal(6, len(b('ExpectRest')))
+equal(4, len(b('babcxyz')))
 
 try:
-  ok(False, len(b('Bogus')))
+  ok(False, len(b('xyz')))
 
 except ValueError:
   ok(True)
