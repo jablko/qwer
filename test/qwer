@@ -16,6 +16,23 @@ equal('Expect', str(b))
 
 # Bound
 
+# int()
+
+# TODO
+a = qwer('123')
+
+equal(123, int(b('123Rest').a))
+equal(123, int(b('123Rest')['a']))
+
+try:
+  ok(False, int(b('Bogus').a))
+
+except ValueError:
+  ok(True)
+
+# TODO
+a = qwer('Expect')
+
 # str()
 
 equal('Expect', str(b('ExpectRest').a))

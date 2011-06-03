@@ -53,6 +53,13 @@ class qwer:
       def __init__(ctx, name):
         ctx.name = name
 
+      def __int__(ctx):
+        result = re.match(ctx.ctx.ctx[ctx.name], ctx.ctx.poiu)
+        if not result:
+          raise ValueError
+
+        return int(result.group(1))
+
       def __str__(ctx):
         result = re.match(ctx.ctx.ctx[ctx.name], ctx.ctx.poiu)
         if not result:
