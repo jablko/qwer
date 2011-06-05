@@ -1,4 +1,4 @@
-import re, sys, untwisted
+import itertools, re, sys, untwisted
 
 __all__ = 'rule', 'qwer'
 
@@ -33,6 +33,7 @@ class qwer:
   __metaclass__ = type
 
   def __init__(ctx, *args):
+    ctx.namespace = sys._getframe().f_back.f_locals
     ctx.args = args
 
   __getattr__ = lambda ctx, name: ''.join(itm[name] if isinstance(itm, rule) else itm for itm in ctx.args)
@@ -59,6 +60,13 @@ class qwer:
           raise ValueError
 
         return int(filter(None, result.groups())[0])
+
+      def __iter__(ctx):
+        result = re.match(ctx.ctx.ctx[ctx.name], ctx.ctx.poiu)
+        if not result:
+          raise ValueError
+
+        return itertools.imap(ctx.ctx.ctx.namespace[ctx.name], filter(None, result.groups()))
 
       def __str__(ctx):
         result = re.match(ctx.ctx.ctx[ctx.name], ctx.ctx.poiu)

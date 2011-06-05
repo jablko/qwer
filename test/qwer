@@ -28,6 +28,18 @@ try:
 except ValueError:
   ok(True)
 
+# iter()
+
+equal(['abc'], map(str, b('babcxyz').a))
+equal(['abc'], map(str, b('babcxyz')['a']))
+equal(['abc', 'def'], map(str, b('aabcbdefxyz').a))
+
+try:
+  ok(False, iter(b('xyz').a))
+
+except ValueError:
+  ok(True)
+
 # str()
 
 equal('abc', str(b('babcxyz').a))
