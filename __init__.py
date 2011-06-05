@@ -69,11 +69,15 @@ class qwer:
 
     __getitem__ = __getattr__
 
+    __int__ = lambda ctx: int(ctx.poiu)
+
     def __len__(ctx):
       result = re.match(str(ctx.ctx), ctx.poiu)
       if not result:
         raise ValueError
 
       return result.end()
+
+    __str__ = lambda ctx: ctx.poiu
 
   __str__ = lambda ctx: ''.join(map(str, ctx.args))

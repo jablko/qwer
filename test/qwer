@@ -40,6 +40,11 @@ try:
 except ValueError:
   ok(True)
 
+# int()
+
+equal(123, int(a('123')))
+equal(123, int(b('123')))
+
 # len()
 
 equal(4, len(b('babcxyz')))
@@ -49,3 +54,8 @@ try:
 
 except ValueError:
   ok(True)
+
+# str()
+
+equal('abc', str(a('abc')))
+equal('abc', str(b('abc')))
