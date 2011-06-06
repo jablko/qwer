@@ -70,12 +70,7 @@ class qwer:
       def __init__(ctx, name):
         ctx.name = name
 
-      def __getattr__(ctx, name):
-        lkjh = list(ctx.name)
-        lkjh.append(name)
-
-        return type.__call__(ctx.ctx.__getattr__, lkjh)
-
+      __getattr__ = lambda ctx, name: type.__call__(ctx.ctx.__getattr__, ctx.name + re.split('\s+', name))
       __getitem__ = __getattr__
 
       def __int__(ctx):

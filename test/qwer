@@ -5,74 +5,78 @@ from testify import *
 
 a = qwer('...')
 b = rule('a')
-c = qwer('(?:a', rule('a'), ')?b', rule('b'))
+c = rule('b')
+d = qwer('(?:a', rule('a'), 'b', rule('b'), ')?c', rule('c'))
 
 # Unbound
 
-equal(('(?:a(...))?b(...)', [a, a]), c.zxcv(('a',)))
-equal(('(?:a...)?b(...)', [a]), c.zxcv(('b', 'a')))
-equal(('(?:a...)?b...', []), c.zxcv(('bogus',)))
+equal(('(?:a(...)b(...))?c(...)', [a, a, a]), d.zxcv(('a',)))
+equal(('(?:a...b(...))?c(...)', [a, a]), d.zxcv(('b', 'a')))
+equal(('(?:a...b...)?c...', []), d.zxcv(('bogus',)))
 
-equal('(?:a...)?b...', str(c))
+equal('(?:a...b...)?c...', str(d))
 
 # Bound
 
 # int()
 
-equal(123, int(c('b123xyz').a))
-equal(123, int(c('b123xyz')['a']))
-equal(123, int(c('a123b456xyz').a))
-equal(456, int(c('a123b456xyz')['b a']))
-equal(456, int(c('a123b456xyz').b.a))
+equal(123, int(d('c123xyz').a))
+equal(123, int(d('c123xyz')['a']))
+equal(123, int(d('a123b456c789xyz').a))
+equal(456, int(d('a123b456c789xyz')['b a']))
+equal(456, int(d('a123b456c789xyz').b.a))
+equal(789, int(d('a123b456c789xyz').c['b a']))
 
 try:
-  ok(False, int(c('b123xyz').bogus))
+  ok(False, int(d('b123xyz').bogus))
 
 except AttributeError:
   ok(True)
 
 try:
-  ok(False, int(c('xyz').a))
+  ok(False, int(d('xyz').a))
 
 except ValueError:
   ok(True)
 
 # iter()
 
-equal(['abc'], map(str, c('babcxyz').a))
-equal(['abc'], map(str, c('babcxyz')['a']))
-equal(['abc', 'def'], map(str, c('aabcbdefxyz').a))
-equal(['def'], map(str, c('aabcbdefxyz')['b a']))
-equal(['def'], map(str, c('aabcbdefxyz').b.a))
+equal(['abc'], map(str, d('cabcxyz').a))
+equal(['abc'], map(str, d('cabcxyz')['a']))
+equal(['abc', 'def', 'ghi'], map(str, d('aabcbdefcghixyz').a))
+equal(['def', 'ghi'], map(str, d('aabcbdefcghixyz')['b a']))
+equal(['def', 'ghi'], map(str, d('aabcbdefcghixyz').b.a))
+equal(['ghi'], map(str, d('aabcbdefcghixyz').c['b a']))
 
 try:
-  ok(False, iter(c('babcxyz').bogus))
+  ok(False, iter(d('cabcxyz').bogus))
 
 except AttributeError:
   ok(True)
 
 try:
-  ok(False, iter(c('xyz').a))
+  ok(False, iter(d('xyz').a))
 
 except ValueError:
   ok(True)
 
 # str()
 
-equal('abc', str(c('babcxyz').a))
-equal('abc', str(c('babcxyz')['a']))
-equal('abcdef', str(c('aabcbdefxyz').a))
-equal('def', str(c('aabcbdefxyz')['b a']))
-equal('def', str(c('aabcbdefxyz').b.a))
+equal('abc', str(d('cabcxyz').a))
+equal('abc', str(d('cabcxyz')['a']))
+equal('abcdefghi', str(d('aabcbdefcghixyz').a))
+equal('defghi', str(d('aabcbdefcghixyz')['b a']))
+equal('defghi', str(d('aabcbdefcghixyz').b.a))
+equal('ghi', str(d('aabcbdefcghixyz').c['b a']))
 
 try:
-  ok(False, str(c('babcxyz').bogus))
+  ok(False, str(d('cabcxyz').bogus))
 
 except AttributeError:
   ok(True)
 
 try:
-  ok(False, str(c('xyz').a))
+  ok(False, str(d('xyz').a))
 
 except ValueError:
   ok(True)
@@ -80,14 +84,14 @@ except ValueError:
 # int()
 
 equal(123, int(a('123')))
-equal(123, int(c('123')))
+equal(123, int(d('123')))
 
 # len()
 
-equal(4, len(c('babcxyz')))
+equal(4, len(d('cabcxyz')))
 
 try:
-  ok(False, len(c('xyz')))
+  ok(False, len(d('xyz')))
 
 except ValueError:
   ok(True)
@@ -95,4 +99,4 @@ except ValueError:
 # str()
 
 equal('abc', str(a('abc')))
-equal('abc', str(c('abc')))
+equal('abc', str(d('abc')))
