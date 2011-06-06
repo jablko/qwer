@@ -23,6 +23,7 @@ equal(123, int(c('b123xyz').a))
 equal(123, int(c('b123xyz')['a']))
 equal(123, int(c('a123b456xyz').a))
 equal(456, int(c('a123b456xyz')['b a']))
+equal(456, int(c('a123b456xyz').b.a))
 
 try:
   ok(False, int(c('b123xyz').bogus))
@@ -42,6 +43,7 @@ equal(['abc'], map(str, c('babcxyz').a))
 equal(['abc'], map(str, c('babcxyz')['a']))
 equal(['abc', 'def'], map(str, c('aabcbdefxyz').a))
 equal(['def'], map(str, c('aabcbdefxyz')['b a']))
+equal(['def'], map(str, c('aabcbdefxyz').b.a))
 
 try:
   ok(False, iter(c('babcxyz').bogus))
@@ -61,6 +63,7 @@ equal('abc', str(c('babcxyz').a))
 equal('abc', str(c('babcxyz')['a']))
 equal('abcdef', str(c('aabcbdefxyz').a))
 equal('def', str(c('aabcbdefxyz')['b a']))
+equal('def', str(c('aabcbdefxyz').b.a))
 
 try:
   ok(False, str(c('babcxyz').bogus))

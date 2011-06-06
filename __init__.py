@@ -64,13 +64,22 @@ class qwer:
 
     class __getattr__:
       class __metaclass__(type):
+        __call__ = lambda ctx, name: type.__call__(ctx, re.split('\s+', name))
         __get__ = untwisted.ctxual
 
       def __init__(ctx, name):
         ctx.name = name
 
+      def __getattr__(ctx, name):
+        lkjh = list(ctx.name)
+        lkjh.append(name)
+
+        return type.__call__(ctx.ctx.__getattr__, lkjh)
+
+      __getitem__ = __getattr__
+
       def __int__(ctx):
-        a, b = ctx.ctx.ctx.zxcv(re.split('\s+', ctx.name))
+        a, b = ctx.ctx.ctx.zxcv(ctx.name)
         if not b:
           raise AttributeError
 
@@ -81,7 +90,7 @@ class qwer:
         return int(filter(None, result.groups())[0])
 
       def __iter__(ctx):
-        a, b = ctx.ctx.ctx.zxcv(re.split('\s+', ctx.name))
+        a, b = ctx.ctx.ctx.zxcv(ctx.name)
         if not b:
           raise AttributeError
 
@@ -92,7 +101,7 @@ class qwer:
         return (b[i](result.groups()[i]) for i in range(len(b)) if result.groups()[i])
 
       def __str__(ctx):
-        a, b = ctx.ctx.ctx.zxcv(re.split('\s+', ctx.name))
+        a, b = ctx.ctx.ctx.zxcv(ctx.name)
         if not b:
           raise AttributeError
 
