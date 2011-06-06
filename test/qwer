@@ -4,68 +4,72 @@ from qwer import *
 from testify import *
 
 a = qwer('...')
-b = qwer('(?:a', rule('a'), ')?b', rule('a'))
+b = rule('a')
+c = qwer('(?:a', rule('a'), ')?b', rule('b'))
 
 # Unbound
 
-equal(('(?:a(...))?b(...)', [a, a]), b.a)
-equal(('(?:a(...))?b(...)', [a, a]), b['a'])
-equal(('(?:a...)?b...', []), b.bogus)
+equal(('(?:a(...))?b(...)', [a, a]), c.zxcv(('a',)))
+equal(('(?:a...)?b(...)', [a]), c.zxcv(('b', 'a')))
+equal(('(?:a...)?b...', []), c.zxcv(('bogus',)))
 
-equal('(?:a...)?b...', str(b))
+equal('(?:a...)?b...', str(c))
 
 # Bound
 
 # int()
 
-equal(123, int(b('b123xyz').a))
-equal(123, int(b('b123xyz')['a']))
-equal(123, int(b('a123b456xyz').a))
+equal(123, int(c('b123xyz').a))
+equal(123, int(c('b123xyz')['a']))
+equal(123, int(c('a123b456xyz').a))
+equal(456, int(c('a123b456xyz')['b a']))
 
 try:
-  ok(False, int(b('b123xyz').bogus))
+  ok(False, int(c('b123xyz').bogus))
 
 except AttributeError:
   ok(True)
 
 try:
-  ok(False, int(b('xyz').a))
+  ok(False, int(c('xyz').a))
 
 except ValueError:
   ok(True)
 
 # iter()
 
-equal(['abc'], map(str, b('babcxyz').a))
-equal(['abc'], map(str, b('babcxyz')['a']))
-equal(['abc', 'def'], map(str, b('aabcbdefxyz').a))
+equal(['abc'], map(str, c('babcxyz').a))
+equal(['abc'], map(str, c('babcxyz')['a']))
+equal(['abc', 'def'], map(str, c('aabcbdefxyz').a))
+equal(['def'], map(str, c('aabcbdefxyz')['b a']))
 
 try:
-  ok(False, iter(b('babcxyz').bogus))
+  ok(False, iter(c('babcxyz').bogus))
 
 except AttributeError:
   ok(True)
 
 try:
-  ok(False, iter(b('xyz').a))
+  ok(False, iter(c('xyz').a))
 
 except ValueError:
   ok(True)
 
 # str()
 
-equal('abc', str(b('babcxyz').a))
-equal('abc', str(b('babcxyz')['a']))
-equal('abcdef', str(b('aabcbdefxyz').a))
+equal('abc', str(c('babcxyz').a))
+equal('abc', str(c('babcxyz')['a']))
+equal('abcdef', str(c('aabcbdefxyz').a))
+equal('def', str(c('aabcbdefxyz')['b a']))
 
 try:
-  ok(False, str(b('babcxyz').bogus))
+  ok(False, str(c('babcxyz').bogus))
 
 except AttributeError:
   ok(True)
 
 try:
-  ok(False, str(b('xyz').a))
+  ok(False, str(c('xyz').a))
 
 except ValueError:
   ok(True)
@@ -73,14 +77,14 @@ except ValueError:
 # int()
 
 equal(123, int(a('123')))
-equal(123, int(b('123')))
+equal(123, int(c('123')))
 
 # len()
 
-equal(4, len(b('babcxyz')))
+equal(4, len(c('babcxyz')))
 
 try:
-  ok(False, len(b('xyz')))
+  ok(False, len(c('xyz')))
 
 except ValueError:
   ok(True)
@@ -88,4 +92,4 @@ except ValueError:
 # str()
 
 equal('abc', str(a('abc')))
-equal('abc', str(b('abc')))
+equal('abc', str(c('abc')))

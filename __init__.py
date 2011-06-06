@@ -7,20 +7,21 @@ class rule:
     ctx.namespace = sys._getframe().f_back.f_locals
     ctx.name = name.split('.')
 
-  def __getattr__(ctx, name):
+  def zxcv(ctx, name):
     result = ctx.namespace[ctx.name[0]]
     for itm in ctx.name[1:]:
       result = getattr(result, itm)
 
-    if ctx.name[-1] == name:
-      a, b = result[name]
+    if ctx.name[-1] == name[0]:
+      if 1 < len(name):
+        return result.zxcv(name[1:])
+
+      a, b = result.zxcv(name)
       b.insert(0, result)
 
       return '(' + a + ')', b
 
-    return result[name]
-
-  __getitem__ = __getattr__
+    return result.zxcv(name)
 
   def __str__(ctx):
     result = ctx.namespace[ctx.name[0]]
@@ -38,12 +39,12 @@ class qwer:
   def __init__(ctx, *args):
     ctx.args = args
 
-  def __getattr__(ctx, name):
+  def zxcv(ctx, name):
     a = ''
     b = []
     for itm in ctx.args:
       if isinstance(itm, rule):
-        c, d = itm[name]
+        c, d = itm.zxcv(name)
 
         a += c
         b += d
@@ -52,8 +53,6 @@ class qwer:
         a += itm
 
     return a, b
-
-  __getitem__ = __getattr__
 
   # Bound
   class __call__:
@@ -71,7 +70,7 @@ class qwer:
         ctx.name = name
 
       def __int__(ctx):
-        a, b = ctx.ctx.ctx[ctx.name]
+        a, b = ctx.ctx.ctx.zxcv(re.split('\s+', ctx.name))
         if not b:
           raise AttributeError
 
@@ -82,7 +81,7 @@ class qwer:
         return int(filter(None, result.groups())[0])
 
       def __iter__(ctx):
-        a, b = ctx.ctx.ctx[ctx.name]
+        a, b = ctx.ctx.ctx.zxcv(re.split('\s+', ctx.name))
         if not b:
           raise AttributeError
 
@@ -93,7 +92,7 @@ class qwer:
         return (b[i](result.groups()[i]) for i in range(len(b)) if result.groups()[i])
 
       def __str__(ctx):
-        a, b = ctx.ctx.ctx[ctx.name]
+        a, b = ctx.ctx.ctx.zxcv(re.split('\s+', ctx.name))
         if not b:
           raise AttributeError
 
