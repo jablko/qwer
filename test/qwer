@@ -8,9 +8,9 @@ b = qwer('(?:a', rule('a'), ')?b', rule('a'))
 
 # Unbound
 
-equal('(?:a(...))?b(...)', b.a)
-equal('(?:a(...))?b(...)', b['a'])
-equal('(?:a...)?b...', b.bogus)
+equal(('(?:a(...))?b(...)', [a, a]), b.a)
+equal(('(?:a(...))?b(...)', [a, a]), b['a'])
+equal(('(?:a...)?b...', []), b.bogus)
 
 equal('(?:a...)?b...', str(b))
 
@@ -21,6 +21,12 @@ equal('(?:a...)?b...', str(b))
 equal(123, int(b('b123xyz').a))
 equal(123, int(b('b123xyz')['a']))
 equal(123, int(b('a123b456xyz').a))
+
+try:
+  ok(False, int(b('b123xyz').bogus))
+
+except AttributeError:
+  ok(True)
 
 try:
   ok(False, int(b('xyz').a))
@@ -35,6 +41,12 @@ equal(['abc'], map(str, b('babcxyz')['a']))
 equal(['abc', 'def'], map(str, b('aabcbdefxyz').a))
 
 try:
+  ok(False, iter(b('babcxyz').bogus))
+
+except AttributeError:
+  ok(True)
+
+try:
   ok(False, iter(b('xyz').a))
 
 except ValueError:
@@ -45,6 +57,12 @@ except ValueError:
 equal('abc', str(b('babcxyz').a))
 equal('abc', str(b('babcxyz')['a']))
 equal('abcdef', str(b('aabcbdefxyz').a))
+
+try:
+  ok(False, str(b('babcxyz').bogus))
+
+except AttributeError:
+  ok(True)
 
 try:
   ok(False, str(b('xyz').a))

@@ -1,4 +1,4 @@
-import itertools, re, sys, untwisted
+import re, sys, untwisted
 
 __all__ = 'rule', 'qwer'
 
@@ -13,7 +13,10 @@ class rule:
       result = getattr(result, itm)
 
     if ctx.name[-1] == name:
-      return '(' + result[name] + ')'
+      a, b = result[name]
+      b.insert(0, result)
+
+      return '(' + a + ')', b
 
     return result[name]
 
@@ -33,10 +36,23 @@ class qwer:
   __metaclass__ = type
 
   def __init__(ctx, *args):
-    ctx.namespace = sys._getframe().f_back.f_locals
     ctx.args = args
 
-  __getattr__ = lambda ctx, name: ''.join(itm[name] if isinstance(itm, rule) else itm for itm in ctx.args)
+  def __getattr__(ctx, name):
+    a = ''
+    b = []
+    for itm in ctx.args:
+      if isinstance(itm, rule):
+        c, d = itm[name]
+
+        a += c
+        b += d
+
+      else:
+        a += itm
+
+    return a, b
+
   __getitem__ = __getattr__
 
   # Bound
@@ -55,21 +71,33 @@ class qwer:
         ctx.name = name
 
       def __int__(ctx):
-        result = re.match(ctx.ctx.ctx[ctx.name], ctx.ctx.poiu)
+        a, b = ctx.ctx.ctx[ctx.name]
+        if not b:
+          raise AttributeError
+
+        result = re.match(a, ctx.ctx.poiu)
         if not result:
           raise ValueError
 
         return int(filter(None, result.groups())[0])
 
       def __iter__(ctx):
-        result = re.match(ctx.ctx.ctx[ctx.name], ctx.ctx.poiu)
+        a, b = ctx.ctx.ctx[ctx.name]
+        if not b:
+          raise AttributeError
+
+        result = re.match(a, ctx.ctx.poiu)
         if not result:
           raise ValueError
 
-        return itertools.imap(ctx.ctx.ctx.namespace[ctx.name], filter(None, result.groups()))
+        return (b[i](result.groups()[i]) for i in range(len(b)) if result.groups()[i])
 
       def __str__(ctx):
-        result = re.match(ctx.ctx.ctx[ctx.name], ctx.ctx.poiu)
+        a, b = ctx.ctx.ctx[ctx.name]
+        if not b:
+          raise AttributeError
+
+        result = re.match(a, ctx.ctx.poiu)
         if not result:
           raise ValueError
 
