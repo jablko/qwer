@@ -70,7 +70,23 @@ class qwer:
       def __init__(ctx, name):
         ctx.name = name
 
-      __getattr__ = lambda ctx, name: type.__call__(ctx.ctx.__getattr__, ctx.name + re.split('\s+', name))
+      def __getattr__(ctx, name):
+        try:
+          name = int(name)
+
+        except ValueError:
+          return type.__call__(ctx.ctx.__getattr__, ctx.name + re.split('\s+', name))
+
+        a, b = ctx.ctx.ctx.zxcv(ctx.name)
+        if not b:
+          raise AttributeError
+
+        result = re.match(a, ctx.ctx.poiu)
+        if not result:
+          raise ValueError
+
+        return list(b[i](result.groups()[i]) for i in range(len(b)) if result.groups()[i])[name]
+
       __getitem__ = __getattr__
 
       def __int__(ctx):
@@ -83,17 +99,6 @@ class qwer:
           raise ValueError
 
         return int(filter(None, result.groups())[0])
-
-      def __iter__(ctx):
-        a, b = ctx.ctx.ctx.zxcv(ctx.name)
-        if not b:
-          raise AttributeError
-
-        result = re.match(a, ctx.ctx.poiu)
-        if not result:
-          raise ValueError
-
-        return (b[i](result.groups()[i]) for i in range(len(b)) if result.groups()[i])
 
       def __str__(ctx):
         a, b = ctx.ctx.ctx.zxcv(ctx.name)

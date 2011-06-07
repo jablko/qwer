@@ -39,27 +39,6 @@ try:
 except ValueError:
   ok(True)
 
-# iter()
-
-equal(['abc'], map(str, d('cabcxyz').a))
-equal(['abc'], map(str, d('cabcxyz')['a']))
-equal(['abc', 'def', 'ghi'], map(str, d('aabcbdefcghixyz').a))
-equal(['def', 'ghi'], map(str, d('aabcbdefcghixyz')['b a']))
-equal(['def', 'ghi'], map(str, d('aabcbdefcghixyz').b.a))
-equal(['ghi'], map(str, d('aabcbdefcghixyz').c['b a']))
-
-try:
-  ok(False, iter(d('cabcxyz').bogus))
-
-except AttributeError:
-  ok(True)
-
-try:
-  ok(False, iter(d('xyz').a))
-
-except ValueError:
-  ok(True)
-
 # str()
 
 equal('abc', str(d('cabcxyz').a))
@@ -100,3 +79,26 @@ except ValueError:
 
 equal('abc', str(a('abc')))
 equal('abc', str(d('abc')))
+
+equal('ghi', str(d('aabcbdefcghixyz').a[2]))
+
+# iter()
+
+equal(['abc'], map(str, d('cabcxyz').a))
+equal(['abc'], map(str, d('cabcxyz')['a']))
+equal(['abc', 'def', 'ghi'], map(str, d('aabcbdefcghixyz').a))
+equal(['def', 'ghi'], map(str, d('aabcbdefcghixyz')['b a']))
+equal(['def', 'ghi'], map(str, d('aabcbdefcghixyz').b.a))
+equal(['ghi'], map(str, d('aabcbdefcghixyz').c['b a']))
+
+try:
+  ok(False, list(d('cabcxyz').bogus))
+
+except AttributeError:
+  ok(True)
+
+try:
+  ok(False, list(d('xyz').a))
+
+except ValueError:
+  ok(True)
