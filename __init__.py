@@ -2,26 +2,92 @@ import re, sys, untwisted
 
 __all__ = 'rule', 'qwer'
 
+class asdf:
+  def __init__(ctx, name, *args):
+    ctx.name = name
+    ctx.args = args
+
+  def select(ctx, name, group):
+    result = []
+    group += 1
+
+    if ctx.name == name[0]:
+      if 1 < len(name):
+        name = name[1:]
+
+      else:
+        result = [(ctx, group)]
+
+    for itm in ctx.args:
+      a, group = itm.select(name, group)
+      result.extend(a)
+
+    return result, group
+
+class poiu:
+  __metaclass__ = type
+
+  def __init__(ctx, match, group, *args):
+    ctx.match = match
+    ctx.group = group
+    ctx.args = args
+
+  class zxcv:
+    class __metaclass__(type):
+      __call__ = lambda ctx, e, name: type.__call__(ctx, e, re.split('\s+', name))
+      __get__ = untwisted.ctxual
+
+    def __init__(ctx, e, name):
+      ctx.name = name
+
+      ctx.iuyta = []
+
+      group = ctx.ctx.group
+      for itm in ctx.ctx.args:
+        a, group = itm.select(name, group)
+        ctx.iuyta.extend(a)
+
+      if not ctx.iuyta:
+        raise e
+
+    def mnbv(ctx, e, name):
+      if isinstance(name, int):
+        try:
+          return ctx.iuytb[name]
+
+        except AttributeError:
+          ctx.iuytb = [poiu(ctx.ctx.match, group, *itm.args) for itm, group in ctx.iuyta if ctx.ctx.match.group(group)]
+
+          return ctx.iuytb[name]
+
+      return type.__call__(ctx.ctx.zxcv, e, ctx.name + re.split('\s+', name))
+
+    __getattr__ = untwisted.partial(mnbv, AttributeError)
+    __getitem__ = untwisted.partial(mnbv, KeyError)
+
+    __int__ = lambda ctx: int(ctx[0])
+    __str__ = lambda ctx: str(ctx[0])
+
+  __getattr__ = untwisted.partial(zxcv, AttributeError)
+  __getitem__ = untwisted.partial(zxcv, KeyError)
+
+  __int__ = lambda ctx: int(ctx.match.group(ctx.group))
+  __len__ = lambda ctx: ctx.match.end(ctx.group) - ctx.match.start(ctx.group)
+  __str__ = lambda ctx: ctx.match.group(ctx.group)
+
 class rule:
   def __init__(ctx, name):
     ctx.namespace = sys._getframe().f_back.f_locals
     ctx.name = name.split('.')
 
-  def zxcv(ctx, name):
-    result = ctx.namespace[ctx.name[0]]
+  def compile(ctx):
+    uytr = ctx.namespace[ctx.name[0]]
     for itm in ctx.name[1:]:
-      result = getattr(result, itm)
+      uytr = getattr(uytr, itm)
 
-    if ctx.name[-1] == name[0]:
-      if 1 < len(name):
-        return result.zxcv(name[1:])
+    pattern, b = uytr.compile()
 
-      a, b = result.zxcv(name)
-      b.insert(0, result)
-
-      return '(' + a + ')', b
-
-    return result.zxcv(name)
+    return '(' + pattern + ')', (asdf(ctx.name[-1], *b),)
 
   def __str__(ctx):
     result = ctx.namespace[ctx.name[0]]
@@ -30,98 +96,33 @@ class rule:
 
     return str(result)
 
-# Unbound
 class qwer:
-
-  # For .__hash__()
-  __metaclass__ = type
-
   def __init__(ctx, *args):
     ctx.args = args
 
-  def zxcv(ctx, name):
-    a = ''
+  def compile(ctx):
+    pattern = []
     b = []
     for itm in ctx.args:
       if isinstance(itm, rule):
-        c, d = itm.zxcv(name)
+        itm, c = itm.compile()
 
-        a += c
-        b += d
+        b.extend(c)
 
-      else:
-        a += itm
+      pattern.append(itm)
 
-    return a, b
+    return ''.join(pattern), b
 
-  # Bound
-  class __call__:
-    class __metaclass__(type):
-      __get__ = untwisted.ctxual
+  def lkjh(ctx, jhgf, subject):
+    pattern, b = ctx.compile()
 
-    def __init__(ctx, poiu):
-      ctx.poiu = poiu
+    match = jhgf(pattern, subject)
+    if not match:
+      raise ValueError
 
-    class __getattr__:
-      class __metaclass__(type):
-        __call__ = lambda ctx, name: type.__call__(ctx, re.split('\s+', name))
-        __get__ = untwisted.ctxual
+    return poiu(match, 0, *b)
 
-      def __init__(ctx, name):
-        ctx.name = name
-
-      def __getattr__(ctx, name):
-        try:
-          name = int(name)
-
-        except ValueError:
-          return type.__call__(ctx.ctx.__getattr__, ctx.name + re.split('\s+', name))
-
-        a, b = ctx.ctx.ctx.zxcv(ctx.name)
-        if not b:
-          raise AttributeError
-
-        result = re.match(a, ctx.ctx.poiu)
-        if not result:
-          raise ValueError
-
-        return list(b[i](result.groups()[i]) for i in range(len(b)) if result.groups()[i])[name]
-
-      __getitem__ = __getattr__
-
-      def __int__(ctx):
-        a, b = ctx.ctx.ctx.zxcv(ctx.name)
-        if not b:
-          raise AttributeError
-
-        result = re.match(a, ctx.ctx.poiu)
-        if not result:
-          raise ValueError
-
-        return int(filter(None, result.groups())[0])
-
-      def __str__(ctx):
-        a, b = ctx.ctx.ctx.zxcv(ctx.name)
-        if not b:
-          raise AttributeError
-
-        result = re.match(a, ctx.ctx.poiu)
-        if not result:
-          raise ValueError
-
-        return ''.join(filter(None, result.groups()))
-
-    __getitem__ = __getattr__
-
-    __int__ = lambda ctx: int(ctx.poiu)
-
-    def __len__(ctx):
-      result = re.match(str(ctx.ctx), ctx.poiu)
-      if not result:
-        raise ValueError
-
-      return result.end()
-
-    __str__ = lambda ctx: ctx.poiu
+  match = untwisted.partial(lkjh, re.match)
+  search = untwisted.partial(lkjh, re.search)
 
   __str__ = lambda ctx: ''.join(map(str, ctx.args))

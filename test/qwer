@@ -1,104 +1,86 @@
 #!/usr/bin/env python
 
-from qwer import *
+from qwer import asdf, qwer, rule
 from testify import *
 
-a = qwer('...')
-b = rule('a')
-c = rule('b')
-d = qwer('(?:a', rule('a'), 'b', rule('b'), ')?c', rule('c'))
+a = qwer('\d\d\d')
+b = qwer('a', rule('a'))
+c = qwer('a', rule('a'), rule('b'))
+d = qwer('(?:', rule('b'), ')?', rule('c'))
 
-# Unbound
+pattern, x = d.compile()
 
-equal(('(?:a(...)b(...))?c(...)', [a, a, a]), d.zxcv(('a',)))
-equal(('(?:a...b(...))?c(...)', [a, a]), d.zxcv(('b', 'a')))
-equal(('(?:a...b...)?c...', []), d.zxcv(('bogus',)))
+equal('(?:(a(\d\d\d)))?(a(\d\d\d)(a(\d\d\d)))', pattern)
+equiv([asdf('b', asdf('a')), asdf('c', asdf('a'), asdf('b', asdf('a')))], x)
 
-equal('(?:a...b...)?c...', str(d))
+equiv(([(asdf('a'), 2)], 2), x[0].select(('a',), 0))
+equiv(([(asdf('a'), 4), (asdf('a'), 6)], 6), x[1].select(('a',), 2))
 
-# Bound
+equiv(([], 2), x[0].select(('c', 'a'), 0))
+equiv(([(asdf('a'), 4), (asdf('a'), 6)], 6), x[1].select(('c', 'a'), 2))
 
-# int()
+equiv(([], 2), x[0].select(('bogus',), 0))
+equiv(([], 6), x[1].select(('bogus',), 2))
 
-equal(123, int(d('c123xyz').a))
-equal(123, int(d('c123xyz')['a']))
-equal(123, int(d('a123b456c789xyz').a))
-equal(456, int(d('a123b456c789xyz')['b a']))
-equal(456, int(d('a123b456c789xyz').b.a))
-equal(789, int(d('a123b456c789xyz').c['b a']))
+equal('(?:a\d\d\d)?a\d\d\da\d\d\d', str(d))
 
-try:
-  ok(False, int(d('b123xyz').bogus))
-
-except AttributeError:
-  ok(True)
+equal(123, int(a.match('123xyz')))
+equal(3, len(a.match('123xyz')))
+equal('123', str(a.match('123xyz')))
 
 try:
-  ok(False, int(d('xyz').a))
+  ok(False, a.match('xyz123xyz'))
 
 except ValueError:
   ok(True)
 
-# str()
-
-equal('abc', str(d('cabcxyz').a))
-equal('abc', str(d('cabcxyz')['a']))
-equal('abcdefghi', str(d('aabcbdefcghixyz').a))
-equal('defghi', str(d('aabcbdefcghixyz')['b a']))
-equal('defghi', str(d('aabcbdefcghixyz').b.a))
-equal('ghi', str(d('aabcbdefcghixyz').c['b a']))
+equal(123, int(a.search('xyz123xyz')))
+equal(3, len(a.search('xyz123xyz')))
+equal('123', str(a.search('xyz123xyz')))
 
 try:
-  ok(False, str(d('cabcxyz').bogus))
-
-except AttributeError:
-  ok(True)
-
-try:
-  ok(False, str(d('xyz').a))
+  ok(False, a.search('xyz'))
 
 except ValueError:
   ok(True)
 
-# int()
-
-equal(123, int(a('123')))
-equal(123, int(d('123')))
-
-# len()
-
-equal(4, len(d('cabcxyz')))
-
-try:
-  ok(False, len(d('xyz')))
-
-except ValueError:
-  ok(True)
-
-# str()
-
-equal('abc', str(a('abc')))
-equal('abc', str(d('abc')))
-
-equal('ghi', str(d('aabcbdefcghixyz').a[2]))
+equal('456', str(d.match('a123a456xyz').a[1]))
 
 # iter()
 
-equal(['abc'], map(str, d('cabcxyz').a))
-equal(['abc'], map(str, d('cabcxyz')['a']))
-equal(['abc', 'def', 'ghi'], map(str, d('aabcbdefcghixyz').a))
-equal(['def', 'ghi'], map(str, d('aabcbdefcghixyz')['b a']))
-equal(['def', 'ghi'], map(str, d('aabcbdefcghixyz').b.a))
-equal(['ghi'], map(str, d('aabcbdefcghixyz').c['b a']))
+equal(['123', '456'], map(str, d.match('a123a456xyz').a))
+equal(['123', '456'], map(str, d.match('a123a456xyz')['a']))
+equal(['123', '456', '789'], map(str, d.match('a123a456a789xyz').a))
+equal(['456', '789'], map(str, d.match('a123a456a789xyz')['c a']))
+equal(['456', '789'], map(str, d.match('a123a456a789xyz').c.a))
+equal(['789'], map(str, d.match('a123a456a789xyz').c['b a']))
+
+# int()
+
+equal(123, int(d.match('a123a456xyz').a))
+equal(123, int(d.match('a123a456xyz')['a']))
+equal(123, int(d.match('a123a456a789xyz').a))
+equal(456, int(d.match('a123a456a789xyz')['c a']))
+equal(456, int(d.match('a123a456a789xyz').c.a))
+equal(789, int(d.match('a123a456a789xyz').c['b a']))
+
+# str()
+
+equal('123', str(d.match('a123a456xyz').a))
+equal('123', str(d.match('a123a456xyz')['a']))
+equal('123', str(d.match('a123a456a789xyz').a))
+equal('456', str(d.match('a123a456a789xyz')['c a']))
+equal('456', str(d.match('a123a456a789xyz').c.a))
+equal('789', str(d.match('a123a456a789xyz').c['b a']))
 
 try:
-  ok(False, list(d('cabcxyz').bogus))
+  ok(False, d.match('a123a456xyz').bogus)
 
 except AttributeError:
   ok(True)
 
 try:
-  ok(False, list(d('xyz').a))
+  ok(False, d.match('a123a456xyz')['bogus'])
 
-except ValueError:
+except KeyError:
   ok(True)
