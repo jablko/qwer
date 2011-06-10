@@ -13,14 +13,14 @@ pattern, x = d.compile()
 equal('(?:(a(\d\d\d)))?(a(\d\d\d)(a(\d\d\d)))', pattern)
 equiv([asdf('b', asdf('a')), asdf('c', asdf('a'), asdf('b', asdf('a')))], x)
 
-equiv(([(asdf('a'), 2)], 2), x[0].select(('a',), 0))
-equiv(([(asdf('a'), 4), (asdf('a'), 6)], 6), x[1].select(('a',), 2))
+equiv((2, [(2, asdf('a'))]), x[0].select(0, ('a',)))
+equiv((6, [(4, asdf('a')), (6, asdf('a'))]), x[1].select(2, ('a',)))
 
-equiv(([], 2), x[0].select(('c', 'a'), 0))
-equiv(([(asdf('a'), 4), (asdf('a'), 6)], 6), x[1].select(('c', 'a'), 2))
+equiv((2, []), x[0].select(0, ('c', 'a')))
+equiv((6, [(4, asdf('a')), (6, asdf('a'))]), x[1].select(2, ('c', 'a')))
 
-equiv(([], 2), x[0].select(('bogus',), 0))
-equiv(([], 6), x[1].select(('bogus',), 2))
+equiv((2, []), x[0].select(0, ('bogus',)))
+equiv((6, []), x[1].select(2, ('bogus',)))
 
 equal('(?:a\d\d\d)?a\d\d\da\d\d\d', str(d))
 

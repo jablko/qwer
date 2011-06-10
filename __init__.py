@@ -7,22 +7,22 @@ class asdf:
     ctx.name = name
     ctx.args = args
 
-  def select(ctx, name, group):
-    result = []
+  def select(ctx, group, name):
     group += 1
+    result = []
 
     if ctx.name == name[0]:
       if 1 < len(name):
         name = name[1:]
 
       else:
-        result = [(ctx, group)]
+        result = [(group, ctx)]
 
     for itm in ctx.args:
-      a, group = itm.select(name, group)
+      group, a = itm.select(group, name)
       result.extend(a)
 
-    return result, group
+    return group, result
 
 class poiu:
   __metaclass__ = type
@@ -44,7 +44,7 @@ class poiu:
 
       group = ctx.ctx.group
       for itm in ctx.ctx.args:
-        a, group = itm.select(name, group)
+        group, a = itm.select(group, name)
         ctx.iuyta.extend(a)
 
       if not ctx.iuyta:
@@ -56,7 +56,7 @@ class poiu:
           return ctx.iuytb[name]
 
         except AttributeError:
-          ctx.iuytb = [poiu(ctx.ctx.match, group, *itm.args) for itm, group in ctx.iuyta if ctx.ctx.match.group(group)]
+          ctx.iuytb = [poiu(ctx.ctx.match, group, *itm.args) for group, itm in ctx.iuyta if ctx.ctx.match.group(group)]
 
           return ctx.iuytb[name]
 
@@ -81,20 +81,11 @@ class rule:
     ctx.name = name.split('.')
 
   def compile(ctx):
-    uytr = ctx.namespace[ctx.name[0]]
-    for itm in ctx.name[1:]:
-      uytr = getattr(uytr, itm)
-
-    pattern, b = uytr.compile()
+    pattern, b = reduce(getattr, ctx.name[1:], ctx.namespace[ctx.name[0]]).compile()
 
     return '(' + pattern + ')', (asdf(ctx.name[-1], *b),)
 
-  def __str__(ctx):
-    result = ctx.namespace[ctx.name[0]]
-    for itm in ctx.name[1:]:
-      result = getattr(result, itm)
-
-    return str(result)
+  __str__ = lambda ctx: str(reduce(getattr, ctx.name[1:], ctx.namespace[ctx.name[0]]))
 
 class qwer:
   def __init__(ctx, *args):
