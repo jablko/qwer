@@ -51,7 +51,10 @@ class poiu:
         raise e
 
     def mnbv(ctx, e, name):
-      if isinstance(name, int):
+      try:
+        name = re.split('\s+', name)
+
+      except TypeError:
         try:
           return ctx.iuytb[name]
 
@@ -60,7 +63,7 @@ class poiu:
 
           return ctx.iuytb[name]
 
-      return type.__call__(ctx.ctx.zxcv, e, ctx.name + re.split('\s+', name))
+      return type.__call__(ctx.ctx.zxcv, e, ctx.name + name)
 
     __getattr__ = untwisted.partial(mnbv, AttributeError)
     __getitem__ = untwisted.partial(mnbv, KeyError)
@@ -93,9 +96,13 @@ class qwer:
     pattern = []
     b = []
     for itm in ctx.args:
-      if isinstance(itm, rule):
+      try:
         itm, c = itm.compile()
 
+      except AttributeError:
+        pass
+
+      else:
         b.extend(c)
 
       pattern.append(itm)
