@@ -22,8 +22,6 @@ equiv((6, [(4, asdf('a')), (6, asdf('a'))]), x[1].select(2, ('c', 'a')))
 equiv((2, []), x[0].select(0, ('bogus',)))
 equiv((6, []), x[1].select(2, ('bogus',)))
 
-equal('(?:a\d\d\d)?a\d\d\da\d\d\d', str(d))
-
 equal(123, int(a.match('123xyz')))
 equal(3, len(a.match('123xyz')))
 equal('123', str(a.match('123xyz')))

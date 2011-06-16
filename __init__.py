@@ -85,8 +85,6 @@ class rule:
 
     return '(' + pattern + ')', (asdf(ctx.name[-1], *b),)
 
-  __str__ = lambda ctx: str(reduce(getattr, ctx.name[1:], ctx.namespace[ctx.name[0]]))
-
 class qwer:
   def __init__(ctx, *args):
     ctx.args = args
@@ -115,5 +113,3 @@ class qwer:
 
   match = untwisted.partial(lkjh, re.match)
   search = untwisted.partial(lkjh, re.search)
-
-  __str__ = lambda ctx: ''.join(map(str, ctx.args))
