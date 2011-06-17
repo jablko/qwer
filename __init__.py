@@ -64,14 +64,16 @@ class rule:
 
       b.append(itm)
 
-    pattern, b = qwer.compile(*b)
+    #pattern, *b = qwer.compile(*b)
+    pattern, b = (lambda pattern, *b: (pattern, b))(*qwer.compile(*b))
     if a:
       c = args[0][-1][0] + 1, b
       args[0].append(c)
 
-      return '(' + pattern + ')', ((ctx.name[-1], c),)
+      return '(' + pattern + ')', (ctx.name[-1], c)
 
-    return pattern, b
+    #return pattern, *b
+    return (lambda *args: args)(pattern, *b)
 
 class qwer:
   def __init__(ctx, *args):
@@ -82,7 +84,8 @@ class qwer:
     b = []
     for itm in ctx.args:
       try:
-        itm, c = itm.compile(*args)
+        #itm, *c = itm.compile(*args)
+        itm, c = (lambda itm, *c: (itm, c))(*itm.compile(*args))
 
       except AttributeError:
         pass
@@ -92,11 +95,13 @@ class qwer:
 
       pattern.append(itm)
 
-    return ''.join(pattern), b
+    #return ''.join(pattern), *b
+    return (lambda *args: args)(''.join(pattern), *b)
 
   def lkjh(ctx, jhgf, subject, *args):
-    a = [(0, [])]
-    pattern, _ = ctx.compile(a, *map(untwisted.partial(re.split, '\s+'), args))
+    a = [(0, ())]
+    #pattern, *_ = ctx.compile(a, *map(untwisted.partial(re.split, '\s+'), args))
+    pattern = ctx.compile(a, *map(untwisted.partial(re.split, '\s+'), args))[0]
     if args:
       a.pop(0)
 
