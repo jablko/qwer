@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from qwer import asdf, qwer, rule
+from qwer import *
 from testify import *
 
 a = qwer('\d\d\d')
@@ -8,19 +8,23 @@ b = qwer('a', rule('a'))
 c = qwer('a', rule('a'), rule('b'))
 d = qwer('(?:', rule('b'), ')?', rule('c'))
 
-pattern, x = d.compile()
+equal(('(?:a\d\d\d)?a\d\d\da\d\d\d', []), d.compile())
 
-equal('(?:(a(\d\d\d)))?(a(\d\d\d)(a(\d\d\d)))', pattern)
-equiv([asdf('b', asdf('a')), asdf('c', asdf('a'), asdf('b', asdf('a')))], x)
+x = [(0, [])]
+equal(('(?:a(\d\d\d))?a(\d\d\d)a(\d\d\d)', [('a', (1, [])), ('a', (2, [])), ('a', (3, []))]), d.compile(x, ('a',)))
+equal([(0, []), (1, []), (2, []), (3, [])], x)
 
-equiv((2, [(2, asdf('a'))]), x[0].select(0, ('a',)))
-equiv((6, [(4, asdf('a')), (6, asdf('a'))]), x[1].select(2, ('a',)))
+x = [(0, [])]
+equal(('(?:a\d\d\d)?a(\d\d\d)a(\d\d\d)', [('a', (1, [])), ('a', (2, []))]), d.compile(x, ('c', 'a')))
+equal([(0, []), (1, []), (2, [])], x)
 
-equiv((2, []), x[0].select(0, ('c', 'a')))
-equiv((6, [(4, asdf('a')), (6, asdf('a'))]), x[1].select(2, ('c', 'a')))
+x = [(0, [])]
+equal(('(?:a\d\d\d)?a\d\d\da(\d\d\d)', [('a', (1, []))]), d.compile(x, ('c', 'b', 'a')))
+equal([(0, []), (1, [])], x)
 
-equiv((2, []), x[0].select(0, ('bogus',)))
-equiv((6, []), x[1].select(2, ('bogus',)))
+x = [(0, [])]
+equal(('(?:a\d\d\d)?a\d\d\da\d\d\d', []), d.compile(x, ('bogus',)))
+equal([(0, [])], x)
 
 equal(123, int(a.match('123xyz')))
 equal(3, len(a.match('123xyz')))
@@ -42,16 +46,54 @@ try:
 except ValueError:
   ok(True)
 
-equal('456', str(d.match('a123a456xyz').a[1]))
+# int()
+
+equal(123, int(d.match('a123a456xyz', 'a')))
+equal(123, int(d.match('a123a456a789xyz', 'a')))
+equal(456, int(d.match('a123a456a789xyz', 'c a')))
+equal(789, int(d.match('a123a456a789xyz', 'c b a')))
+
+try:
+  ok(False, int(d.match('a123a456xyz', 'bogus')))
+
+except IndexError:
+  ok(True)
+
+# str()
+
+equal('123', str(d.match('a123a456xyz', 'a')))
+equal('123', str(d.match('a123a456a789xyz', 'a')))
+equal('456', str(d.match('a123a456a789xyz', 'c a')))
+equal('789', str(d.match('a123a456a789xyz', 'c b a')))
+
+try:
+  ok(False, str(d.match('a123a456xyz', 'bogus')))
+
+except IndexError:
+  ok(True)
+
+equal('456', str(d.match('a123a456xyz', 'a')[1]))
+
+try:
+  ok(False, d.match('a123a456xyz', 'a')[2])
+
+except IndexError:
+  ok(True)
+
+try:
+  ok(False, d.match('a123a456xyz', 'bogus')[0])
+
+except IndexError:
+  ok(True)
 
 # iter()
 
-equal(['123', '456'], map(str, d.match('a123a456xyz').a))
-equal(['123', '456'], map(str, d.match('a123a456xyz')['a']))
-equal(['123', '456', '789'], map(str, d.match('a123a456a789xyz').a))
-equal(['456', '789'], map(str, d.match('a123a456a789xyz')['c a']))
-equal(['456', '789'], map(str, d.match('a123a456a789xyz').c.a))
-equal(['789'], map(str, d.match('a123a456a789xyz').c['b a']))
+equal(['123', '456'], map(str, d.match('a123a456xyz', 'a')))
+equal(['123', '456', '789'], map(str, d.match('a123a456a789xyz', 'a')))
+equal(['456', '789'], map(str, d.match('a123a456a789xyz', 'c a')))
+equal(['789'], map(str, d.match('a123a456a789xyz', 'c b a')))
+
+equal([], map(str, d.match('a123a456xyz', 'bogus')))
 
 # int()
 
@@ -70,6 +112,17 @@ equal('123', str(d.match('a123a456a789xyz').a))
 equal('456', str(d.match('a123a456a789xyz')['c a']))
 equal('456', str(d.match('a123a456a789xyz').c.a))
 equal('789', str(d.match('a123a456a789xyz').c['b a']))
+
+equal('456', str(d.match('a123a456xyz').a[1]))
+
+# iter()
+
+equal(['123', '456'], map(str, d.match('a123a456xyz').a))
+equal(['123', '456'], map(str, d.match('a123a456xyz')['a']))
+equal(['123', '456', '789'], map(str, d.match('a123a456a789xyz').a))
+equal(['456', '789'], map(str, d.match('a123a456a789xyz')['c a']))
+equal(['456', '789'], map(str, d.match('a123a456a789xyz').c.a))
+equal(['789'], map(str, d.match('a123a456a789xyz').c['b a']))
 
 try:
   ok(False, d.match('a123a456xyz').bogus)
