@@ -53,27 +53,39 @@ class rule:
     qwer = reduce(getattr, ctx.name[1:], ctx.namespace[ctx.name[0]])
 
     a = False
-    b = list(args[:1])
-    for itm in args[1:]:
-      if ctx.name[-1] == itm[0]:
-        if 1 < len(itm):
-          itm = itm[1:]
 
-        else:
-          a = True
+    try:
+      #b, *c = args
+      b, c = args[0], args[1:]
 
-      b.append(itm)
+    except IndexError:
+      pass
 
-    #pattern, *b = qwer.compile(*b)
-    pattern, b = (lambda pattern, *b: (pattern, b))(*qwer.compile(*b))
+    else:
+      d = []
+      for itm in c:
+        if ctx.name[-1] == itm[0]:
+          if 1 < len(itm):
+            itm = itm[1:]
+
+          else:
+            a = True
+
+        d.append(itm)
+
+      #args = b, *d
+      args = (lambda *args: args)(b, *d)
+
+    #pattern, *e = qwer.compile(*args)
+    pattern, e = (lambda pattern, *e: (pattern, e))(*qwer.compile(*args))
     if a:
-      c = args[0][-1][0] + 1, b
-      args[0].append(c)
+      f = b[-1][0] + 1, e
+      args[0].append(f)
 
-      return '(' + pattern + ')', (ctx.name[-1], c)
+      return '(' + pattern + ')', (ctx.name[-1], f)
 
-    #return pattern, *b
-    return (lambda *args: args)(pattern, *b)
+    #return pattern, *e
+    return (lambda *args: args)(pattern, *e)
 
 class qwer:
   def __init__(ctx, *args):
