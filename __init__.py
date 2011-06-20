@@ -54,26 +54,50 @@ class rule:
 
     a = []
     b = False
+    c = False
     for itm in args:
       if ctx.name[-1] == itm[0]:
-        if 1 < len(itm):
-          itm = itm[1:]
+        if isinstance(itm[-1], str):
+          if 1 < len(itm):
+            a.append(itm[1:])
+
+          else:
+            group += 1
+
+            a.append(itm)
+
+            b = True
+
+        elif 2 < len(itm):
+          a.append(itm[1:])
 
         else:
           group += 1
 
+          d = list(itm[:-1])
+          d.append(())
+          a.append(d)
+
+          a.extend(itm[-1])
+
           b = True
+          c = True
 
-      a.append(itm)
+      else:
+        a.append(itm)
 
-    group, pattern, c, d = qwer.compile(group, *a)
+    e = group
+    group, pattern, f, g = qwer.compile(group, *a)
+
     if b:
-      e = group, c
-      d.insert(0, e)
+      h = e, f
 
-      return group, '(' + pattern + ')', [(ctx.name[-1], e)], d
+      if c:
+        g.insert(0, h)
 
-    return group, pattern, c, d
+      return group, '(' + pattern + ')', [(ctx.name[-1], h)], g
+
+    return group, pattern, f, g
 
 class qwer:
   def __init__(ctx, *args):
@@ -99,16 +123,30 @@ class qwer:
     return group, ''.join(pattern), a, b
 
   def lkjh(ctx, jhgf, subject, *args):
-    _, pattern, a, b = ctx.compile(0, *map(untwisted.partial(re.split, '\s+'), args))
+    a = []
+    b = False
+    for itm in args:
+      match = re.match('\(\s*(.+?)\s*\)|(.+)(?:\(\s*(.+?)\s*\))?', itm)
+      if match.group(1):
+        a.extend(map(untwisted.partial(re.split, '\s+'), re.split('\s*,\s*', match.group(1))))
+
+      else:
+        c = re.split('\s+', match.group(2))
+        c.append(map(untwisted.partial(re.split, '\s+'), re.split('\s*,\s*', match.group(3))) if match.group(3) else ())
+        a.append(c)
+
+        b = True
+
+    _, pattern, d, e = ctx.compile(0, *a)
 
     match = jhgf(pattern, subject)
     if not match:
       raise ValueError
 
-    if args:
-      return poiu(match, *filter(lambda itm: match.group(itm[0]), b))
+    if b:
+      return poiu(match, *filter(lambda itm: match.group(itm[0]), e))
 
-    return poiu(match, (0, a))
+    return poiu(match, (0, d))
 
   match = untwisted.partial(lkjh, re.match)
   search = untwisted.partial(lkjh, re.search)

@@ -13,26 +13,6 @@ equal((0,
   [],
   []), d.compile(0))
 
-equal((3,
-  '(?:a(\d\d\d))?a(\d\d\d)a(\d\d\d)',
-  [('a', (1, [])), ('a', (2, [])), ('a', (3, []))],
-  [(1, []), (2, []), (3, [])]), d.compile(0, ('a',)))
-
-equal((2,
-  '(?:a\d\d\d)?a(\d\d\d)a(\d\d\d)',
-  [('a', (1, [])), ('a', (2, []))],
-  [(1, []), (2, [])]), d.compile(0, ('c', 'a')))
-
-equal((1,
-  '(?:a\d\d\d)?a\d\d\da(\d\d\d)',
-  [('a', (1, []))],
-  [(1, [])]), d.compile(0, ('c', 'b', 'a')))
-
-equal((0,
-  '(?:a\d\d\d)?a\d\d\da\d\d\d',
-  [],
-  []), d.compile(0, ('bogus',)))
-
 equal(123, int(a.match('123xyz')))
 equal(3, len(a.match('123xyz')))
 equal('123', str(a.match('123xyz')))
@@ -52,6 +32,26 @@ try:
 
 except ValueError:
   ok(True)
+
+equal((3,
+  '(?:a(\d\d\d))?a(\d\d\d)a(\d\d\d)',
+  [('a', (1, [])), ('a', (2, [])), ('a', (3, []))],
+  [(1, []), (2, []), (3, [])]), d.compile(0, ('a', ())))
+
+equal((2,
+  '(?:a\d\d\d)?a(\d\d\d)a(\d\d\d)',
+  [('a', (1, [])), ('a', (2, []))],
+  [(1, []), (2, [])]), d.compile(0, ('c', 'a', ())))
+
+equal((1,
+  '(?:a\d\d\d)?a\d\d\da(\d\d\d)',
+  [('a', (1, []))],
+  [(1, [])]), d.compile(0, ('c', 'b', 'a', ())))
+
+equal((0,
+  '(?:a\d\d\d)?a\d\d\da\d\d\d',
+  [],
+  []), d.compile(0, ('bogus', ())))
 
 # int()
 
@@ -102,43 +102,72 @@ equal(['789'], map(str, d.match('a123a456a789xyz', 'c b a')))
 
 equal([], map(str, d.match('a123a456xyz', 'bogus')))
 
+equal((6,
+  '(?:(a(\d\d\d)))?(a(\d\d\d)(a(\d\d\d)))',
+  [('b', (1, [('a', (2, []))])), ('c', (3, [('a', (4, [])), ('b', (5, [('a', (6, []))]))]))],
+  []), d.compile(0, ('a',), ('b',), ('c',)))
+
 # int()
 
-equal(123, int(d.match('a123a456xyz').a))
-equal(123, int(d.match('a123a456xyz')['a']))
-equal(123, int(d.match('a123a456a789xyz').a))
-equal(456, int(d.match('a123a456a789xyz')['c a']))
-equal(456, int(d.match('a123a456a789xyz').c.a))
-equal(789, int(d.match('a123a456a789xyz').c['b a']))
+equal(123, int(d.match('a123a456xyz', '( a, b, c )').a))
+equal(123, int(d.match('a123a456xyz', '( a, b, c )')['a']))
+equal(123, int(d.match('a123a456a789xyz', '( a, b, c )').a))
+equal(456, int(d.match('a123a456a789xyz', '( a, b, c )')['c a']))
+equal(456, int(d.match('a123a456a789xyz', '( a, b, c )').c.a))
+equal(789, int(d.match('a123a456a789xyz', '( a, b, c )').c['b a']))
 
 # str()
 
-equal('123', str(d.match('a123a456xyz').a))
-equal('123', str(d.match('a123a456xyz')['a']))
-equal('123', str(d.match('a123a456a789xyz').a))
-equal('456', str(d.match('a123a456a789xyz')['c a']))
-equal('456', str(d.match('a123a456a789xyz').c.a))
-equal('789', str(d.match('a123a456a789xyz').c['b a']))
+equal('123', str(d.match('a123a456xyz', '( a, b, c )').a))
+equal('123', str(d.match('a123a456xyz', '( a, b, c )')['a']))
+equal('123', str(d.match('a123a456a789xyz', '( a, b, c )').a))
+equal('456', str(d.match('a123a456a789xyz', '( a, b, c )')['c a']))
+equal('456', str(d.match('a123a456a789xyz', '( a, b, c )').c.a))
+equal('789', str(d.match('a123a456a789xyz', '( a, b, c )').c['b a']))
 
-equal('456', str(d.match('a123a456xyz').a[1]))
+equal('456', str(d.match('a123a456xyz', '( a, b, c )').a[1]))
 
 # iter()
 
-equal(['123', '456'], map(str, d.match('a123a456xyz').a))
-equal(['123', '456'], map(str, d.match('a123a456xyz')['a']))
-equal(['123', '456', '789'], map(str, d.match('a123a456a789xyz').a))
-equal(['456', '789'], map(str, d.match('a123a456a789xyz')['c a']))
-equal(['456', '789'], map(str, d.match('a123a456a789xyz').c.a))
-equal(['789'], map(str, d.match('a123a456a789xyz').c['b a']))
+equal(['123', '456'], map(str, d.match('a123a456xyz', '( a, b, c )').a))
+equal(['123', '456'], map(str, d.match('a123a456xyz', '( a, b, c )')['a']))
+equal(['123', '456', '789'], map(str, d.match('a123a456a789xyz', '( a, b, c )').a))
+equal(['456', '789'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['c a']))
+equal(['456', '789'], map(str, d.match('a123a456a789xyz', '( a, b, c )').c.a))
+equal(['789'], map(str, d.match('a123a456a789xyz', '( a, b, c )').c['b a']))
 
 try:
-  ok(False, d.match('a123a456xyz').bogus)
+  ok(False, d.match('a123a456xyz', '( a, b, c )').bogus)
 
 except AttributeError:
   ok(True)
 
 try:
-  ok(False, d.match('a123a456xyz')['bogus'])
+  ok(False, d.match('a123a456xyz', '( a, b, c )')['bogus'])
+
+except KeyError:
+  ok(True)
+
+try:
+  ok(False, d.match('a123a456xyz', '( bogus )').a)
+
+except AttributeError:
+  ok(True)
+
+try:
+  ok(False, d.match('a123a456xyz', '( bogus )')['a'])
+
+except KeyError:
+  ok(True)
+
+try:
+  ok(False, d.match('a123a456xyz').a)
+
+except AttributeError:
+  ok(True)
+
+try:
+  ok(False, d.match('a123a456xyz')['a'])
 
 except KeyError:
   ok(True)
