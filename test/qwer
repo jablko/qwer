@@ -8,23 +8,30 @@ b = qwer('a', rule('a'))
 c = qwer('a', rule('a'), rule('b'))
 d = qwer('(?:', rule('b'), ')?', rule('c'))
 
-equal(('(?:a\d\d\d)?a\d\d\da\d\d\d',), d.compile())
+equal((0,
+  '(?:a\d\d\d)?a\d\d\da\d\d\d',
+  [],
+  []), d.compile(0))
 
-x = [(0, ())]
-equal(('(?:a(\d\d\d))?a(\d\d\d)a(\d\d\d)', ('a', (1, ())), ('a', (2, ())), ('a', (3, ()))), d.compile(x, ('a',)))
-equal([(0, ()), (1, ()), (2, ()), (3, ())], x)
+equal((3,
+  '(?:a(\d\d\d))?a(\d\d\d)a(\d\d\d)',
+  [('a', (1, [])), ('a', (2, [])), ('a', (3, []))],
+  [(1, []), (2, []), (3, [])]), d.compile(0, ('a',)))
 
-x = [(0, ())]
-equal(('(?:a\d\d\d)?a(\d\d\d)a(\d\d\d)', ('a', (1, ())), ('a', (2, ()))), d.compile(x, ('c', 'a')))
-equal([(0, ()), (1, ()), (2, ())], x)
+equal((2,
+  '(?:a\d\d\d)?a(\d\d\d)a(\d\d\d)',
+  [('a', (1, [])), ('a', (2, []))],
+  [(1, []), (2, [])]), d.compile(0, ('c', 'a')))
 
-x = [(0, ())]
-equal(('(?:a\d\d\d)?a\d\d\da(\d\d\d)', ('a', (1, ()))), d.compile(x, ('c', 'b', 'a')))
-equal([(0, ()), (1, ())], x)
+equal((1,
+  '(?:a\d\d\d)?a\d\d\da(\d\d\d)',
+  [('a', (1, []))],
+  [(1, [])]), d.compile(0, ('c', 'b', 'a')))
 
-x = [(0, ())]
-equal(('(?:a\d\d\d)?a\d\d\da\d\d\d',), d.compile(x, ('bogus',)))
-equal([(0, ())], x)
+equal((0,
+  '(?:a\d\d\d)?a\d\d\da\d\d\d',
+  [],
+  []), d.compile(0, ('bogus',)))
 
 equal(123, int(a.match('123xyz')))
 equal(3, len(a.match('123xyz')))

@@ -49,79 +49,66 @@ class rule:
     ctx.namespace = sys._getframe().f_back.f_locals
     ctx.name = name.split('.')
 
-  def compile(ctx, *args):
+  def compile(ctx, group, *args):
     qwer = reduce(getattr, ctx.name[1:], ctx.namespace[ctx.name[0]])
 
-    a = False
+    a = []
+    b = False
+    for itm in args:
+      if ctx.name[-1] == itm[0]:
+        if 1 < len(itm):
+          itm = itm[1:]
 
-    try:
-      #b, *c = args
-      b, c = args[0], args[1:]
+        else:
+          group += 1
 
-    except IndexError:
-      pass
+          b = True
 
-    else:
-      d = []
-      for itm in c:
-        if ctx.name[-1] == itm[0]:
-          if 1 < len(itm):
-            itm = itm[1:]
+      a.append(itm)
 
-          else:
-            a = True
+    group, pattern, c, d = qwer.compile(group, *a)
+    if b:
+      e = group, c
+      d.insert(0, e)
 
-        d.append(itm)
+      return group, '(' + pattern + ')', [(ctx.name[-1], e)], d
 
-      #args = b, *d
-      args = (lambda *args: args)(b, *d)
-
-    #pattern, *e = qwer.compile(*args)
-    pattern, e = (lambda pattern, *e: (pattern, e))(*qwer.compile(*args))
-    if a:
-      f = b[-1][0] + 1, e
-      args[0].append(f)
-
-      return '(' + pattern + ')', (ctx.name[-1], f)
-
-    #return pattern, *e
-    return (lambda *args: args)(pattern, *e)
+    return group, pattern, c, d
 
 class qwer:
   def __init__(ctx, *args):
     ctx.args = args
 
-  def compile(ctx, *args):
+  def compile(ctx, group, *args):
     pattern = []
+    a = []
     b = []
     for itm in ctx.args:
       try:
-        #itm, *c = itm.compile(*args)
-        itm, c = (lambda itm, *c: (itm, c))(*itm.compile(*args))
+        group, itm, c, d = itm.compile(group, *args)
 
       except AttributeError:
         pass
 
       else:
-        b.extend(c)
+        a.extend(c)
+        b.extend(d)
 
       pattern.append(itm)
 
-    #return ''.join(pattern), *b
-    return (lambda *args: args)(''.join(pattern), *b)
+    return group, ''.join(pattern), a, b
 
   def lkjh(ctx, jhgf, subject, *args):
-    a = [(0, ())]
-    #pattern, *_ = ctx.compile(a, *map(untwisted.partial(re.split, '\s+'), args))
-    pattern = ctx.compile(a, *map(untwisted.partial(re.split, '\s+'), args))[0]
-    if args:
-      a.pop(0)
+    _, pattern, a, b = ctx.compile(0, *map(untwisted.partial(re.split, '\s+'), args))
 
     match = jhgf(pattern, subject)
     if not match:
       raise ValueError
 
-    return poiu(match, *filter(lambda itm: match.group(itm[0]), a))
+    if args:
+      return poiu(match, *filter(lambda itm: match.group(itm[0]), b))
+
+    return poiu(match, (0, a))
 
   match = untwisted.partial(lkjh, re.match)
   search = untwisted.partial(lkjh, re.search)
