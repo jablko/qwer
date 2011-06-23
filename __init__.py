@@ -154,4 +154,4 @@ class qwer:
   def replace(ctx, replace, subject, *args, **kwds):
     _, pattern, _, _ = ctx.compile(0)
 
-    return re.sub(pattern, replace, subject)
+    return re.sub(pattern, lambda match: replace(poiu(match, (0, []))) if callable(replace) else replace, subject)

@@ -6,3 +6,4 @@ from testify import *
 a = qwer('\d\d\d')
 
 equal('xyzabcxyz', a.replace('abc', 'xyz123xyz'))
+equal('xyz124xyz', a.replace(lambda a: str(int(a) + 1), 'xyz123xyz'))
