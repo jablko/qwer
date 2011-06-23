@@ -4,6 +4,11 @@ from qwer import *
 from testify import *
 
 a = qwer('\d\d\d')
+b = qwer('a', rule('a'))
+c = qwer('a', rule('a'), rule('b'))
+d = qwer('(?:', rule('b'), ')?', rule('c'))
 
 equal('xyzabcxyz', a.replace('abc', 'xyz123xyz'))
 equal('xyz124xyz', a.replace(lambda a: str(int(a) + 1), 'xyz123xyz'))
+
+equal('xyz579xyz', d.replace(lambda a: str(sum(map(int, a))), 'xyza123a456xyz', 'a'))

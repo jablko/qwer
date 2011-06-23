@@ -152,6 +152,30 @@ class qwer:
   search = untwisted.partial(lkjh, re.search)
 
   def replace(ctx, replace, subject, *args, **kwds):
-    _, pattern, _, _ = ctx.compile(0)
+    a = []
+    b = False
+    for itm in args:
+      match = re.match('\(\s*(.+?)\s*\)|(.+?)(?:\s*\(\s*(.+?)\s*\))?$', itm)
+      if match.group(1):
+        a.extend(map(untwisted.partial(re.split, '\s+'), re.split('\s*,\s*', match.group(1))))
 
-    return re.sub(pattern, lambda match: replace(poiu(match, (0, []))) if callable(replace) else replace, subject)
+      else:
+        c = re.split('\s+', match.group(2))
+        c.append(map(untwisted.partial(re.split, '\s+'), re.split('\s*,\s*', match.group(3))) if match.group(3) else ())
+        a.append(c)
+
+        b = True
+
+    _, pattern, d, e = ctx.compile(0, *a)
+
+    if callable(replace):
+      if b:
+        f = lambda match: replace(poiu(match, *filter(lambda itm: match.group(itm[0]), e)))
+
+      else:
+        f = lambda match: replace(poiu(match, (0, d)))
+
+    else:
+      f = replace
+
+    return re.sub(pattern, f, subject)
