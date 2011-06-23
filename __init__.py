@@ -126,7 +126,7 @@ class qwer:
     a = []
     b = False
     for itm in args:
-      match = re.match('\(\s*(.+?)\s*\)|(.+)(?:\(\s*(.+?)\s*\))?', itm)
+      match = re.match('\(\s*(.+?)\s*\)|(.+?)(?:\s*\(\s*(.+?)\s*\))?$', itm)
       if match.group(1):
         a.extend(map(untwisted.partial(re.split, '\s+'), re.split('\s*,\s*', match.group(1))))
 
