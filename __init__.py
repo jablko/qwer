@@ -178,4 +178,8 @@ class qwer:
     else:
       f = replace
 
-    return re.sub(pattern, f, subject)
+    try:
+      return re.sub(pattern, f, subject, kwds['count'])
+
+    except KeyError:
+      return re.sub(pattern, f, subject)

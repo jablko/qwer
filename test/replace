@@ -12,3 +12,5 @@ equal('xyzabcxyz', a.replace('abc', 'xyz123xyz'))
 equal('xyz124xyz', a.replace(lambda a: str(int(a) + 1), 'xyz123xyz'))
 
 equal('xyz579xyz', d.replace(lambda a: str(sum(map(int, a))), 'xyza123a456xyz', 'a'))
+
+equal('xyzabc123xyz', a.replace('abc', 'xyz123123xyz', count=1))
