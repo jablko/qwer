@@ -150,3 +150,8 @@ class qwer:
 
   match = untwisted.partial(lkjh, re.match)
   search = untwisted.partial(lkjh, re.search)
+
+  def replace(ctx, replace, subject, *args, **kwds):
+    _, pattern, _, _ = ctx.compile(0)
+
+    return re.sub(pattern, replace, subject)

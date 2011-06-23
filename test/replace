@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+
+from qwer import *
+from testify import *
+
+a = qwer('\d\d\d')
+
+equal('xyzabcxyz', a.replace('abc', 'xyz123xyz'))
