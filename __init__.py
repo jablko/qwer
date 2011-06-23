@@ -42,6 +42,7 @@ class poiu:
 
   __int__ = lambda ctx: int(ctx.match.group(ctx.args[0][0]))
   __len__ = lambda ctx: ctx.match.end(ctx.args[0][0]) - ctx.match.start(ctx.args[0][0])
+  __nonzero__ = lambda ctx: bool(ctx.args)
   __str__ = lambda ctx: ctx.match.group(ctx.args[0][0])
 
 class rule:
