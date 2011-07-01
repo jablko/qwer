@@ -4,6 +4,12 @@ __all__ = 'rule', 'qwer'
 
 def select(name, *args):
   for itm in args:
+    if '>' == name[0]:
+      if name[1] == itm[0]:
+        yield itm[1]
+
+      continue
+
     if name[0] == itm[0]:
       if 1 < len(name):
         name = name[1:]
