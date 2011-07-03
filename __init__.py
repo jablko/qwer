@@ -6,11 +6,18 @@ def select(name, *args):
   for itm in args:
     if '>' == name[0]:
       if name[1] == itm[0]:
-        yield itm[1]
+        if 2 < len(name):
+          name = name[2:]
 
-      continue
+        else:
+          yield itm[1]
 
-    if name[0] == itm[0]:
+          continue
+
+      else:
+        continue
+
+    elif name[0] == itm[0]:
       if 1 < len(name):
         name = name[1:]
 

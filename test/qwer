@@ -173,6 +173,8 @@ except KeyError:
   ok(True)
 
 equal(['456'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['c > a']))
+equal(['789'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['c > b a']))
+
 equal(['456'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['c>a']))
 
 equal((4,
