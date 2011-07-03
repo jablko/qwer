@@ -59,7 +59,7 @@ class poiu:
 
   def mnbv(ctx, e, name):
     try:
-      name = re.findall('>|[^\s>]+', name)
+      name = re.findall('\+|>|[^\s+>]+', name)
 
     except TypeError:
       return poiu(ctx.match, ctx.args[name])
@@ -173,11 +173,11 @@ class qwer:
     for itm in args:
       match = re.match('\((.+)\)|(.+?)(?:\((.+)\))?$', itm)
       if match.group(1):
-        a.extend(map(untwisted.partial(re.findall, '>|[^\s>]+'), re.split(',', match.group(1))))
+        a.extend(map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', match.group(1))))
 
       else:
-        c = re.findall('>|[^\s>]+', match.group(2))
-        c.append(map(untwisted.partial(re.findall, '>|[^\s>]+'), re.split(',', match.group(3))) if match.group(3) else ())
+        c = re.findall('\+|>|[^\s+>]+', match.group(2))
+        c.append(map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', match.group(3))) if match.group(3) else ())
         a.append(c)
 
         b = True
@@ -211,11 +211,11 @@ class qwer:
     for itm in args:
       match = re.match('\((.+)\)|(.+?)(?:\((.+)\))?$', itm)
       if match.group(1):
-        a.extend(map(untwisted.partial(re.findall, '>|[^\s>]+'), re.split(',', match.group(1))))
+        a.extend(map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', match.group(1))))
 
       else:
-        c = re.findall('>|[^\s>]+', match.group(2))
-        c.append(map(untwisted.partial(re.findall, '>|[^\s>]+'), re.split(',', match.group(3))) if match.group(3) else ())
+        c = re.findall('\+|>|[^\s+>]+', match.group(2))
+        c.append(map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', match.group(3))) if match.group(3) else ())
         a.append(c)
 
         b = True

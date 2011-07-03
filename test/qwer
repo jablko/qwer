@@ -179,6 +179,11 @@ equal(['789'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['c > b a']))
 
 equal(['456'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['c>a']))
 
+equal(['a789'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['a + b']))
+equal(['789'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['a + b a']))
+
+equal(['a789'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['a+b']))
+
 e = ('b', [3, [('a', [4, []])]])
 
 equal((4,
