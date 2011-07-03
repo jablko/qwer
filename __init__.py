@@ -4,26 +4,48 @@ __all__ = 'rule', 'qwer'
 
 def select(name, *args):
   for itm in args:
+    if '+' == name[0]:
+      try:
+        if name[1] == itm[2][0]:
+          if 2 < len(name):
+            for itm in select(name[2:], itm[2][1]):
+              yield itm
+
+            continue
+
+          yield itm[2][1]
+
+      except IndexError:
+        pass
+
+      continue
+
     for itm in itm[1]:
       if '>' == name[0]:
         if name[1] == itm[0]:
           if 2 < len(name):
-            name = name[2:]
-
-          else:
-            yield itm[1]
+            for itm in select(name[2:], itm[1]):
+              yield itm
 
             continue
 
-        else:
+          yield itm[1]
+
+        continue
+
+      if name[0] == itm[0]:
+        if 1 < len(name):
+          for itm in select(name[1:], itm[1]):
+            yield itm
+
           continue
 
-      elif name[0] == itm[0]:
-        if 1 < len(name):
-          name = name[1:]
+        yield itm[1]
 
-        else:
-          yield itm[1]
+        for itm in select(name, itm[1]):
+          yield itm
+
+        continue
 
       for itm in select(name, itm[1]):
         yield itm

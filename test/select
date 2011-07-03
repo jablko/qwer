@@ -21,3 +21,9 @@ equiv(([4, [], a],),
 
 equiv(([6, []],),
   qwer.select(('c', '>', 'b', 'a'), c))
+
+equiv(([5, [('a', [6, []])]],),
+  qwer.select(('a', '+', 'b'), c))
+
+equiv(([6, []],),
+  qwer.select(('a', '+', 'b', 'a'), c))
