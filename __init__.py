@@ -4,28 +4,29 @@ __all__ = 'rule', 'qwer'
 
 def select(name, *args):
   for itm in args:
-    if '>' == name[0]:
-      if name[1] == itm[0]:
-        if 2 < len(name):
-          name = name[2:]
+    for itm in itm[1]:
+      if '>' == name[0]:
+        if name[1] == itm[0]:
+          if 2 < len(name):
+            name = name[2:]
+
+          else:
+            yield itm[1]
+
+            continue
+
+        else:
+          continue
+
+      elif name[0] == itm[0]:
+        if 1 < len(name):
+          name = name[1:]
 
         else:
           yield itm[1]
 
-          continue
-
-      else:
-        continue
-
-    elif name[0] == itm[0]:
-      if 1 < len(name):
-        name = name[1:]
-
-      else:
-        yield itm[1]
-
-    for itm in select(name, *itm[1][1]):
-      yield itm
+      for itm in select(name, itm[1]):
+        yield itm
 
 class poiu:
   __metaclass__ = type
@@ -41,10 +42,7 @@ class poiu:
     except TypeError:
       return poiu(ctx.match, ctx.args[name])
 
-    a = []
-    for itm in ctx.args:
-      a.extend(select(name, *itm[1]))
-
+    a = list(select(name, *ctx.args))
     if not a:
       raise e
 
