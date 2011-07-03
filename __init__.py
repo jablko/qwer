@@ -86,8 +86,10 @@ class rule:
         else:
           group += 1
 
+          # list() to avoid AttributeError: 'tuple' object has no attribute 'append'
           d = list(itm[:-1])
           d.append(())
+
           a.append(d)
 
           a.extend(itm[-1])
@@ -102,7 +104,16 @@ class rule:
     group, pattern, f, g = qwer.compile(group, *a)
 
     if b:
-      h = e, f
+      h = iter(f)
+      i = iter(f[1:])
+      while True:
+        try:
+          h.next()[1].append(i.next())
+
+        except StopIteration:
+          break
+
+      h = [e, f]
 
       if c:
         g.insert(0, h)
@@ -158,7 +169,16 @@ class qwer:
     if b:
       return poiu(match, *filter(lambda itm: match.group(itm[0]), e))
 
-    return poiu(match, (0, d))
+    f = iter(d)
+    g = iter(d[1:])
+    while True:
+      try:
+        f.next()[1].append(g.next())
+
+      except StopIteration:
+        break
+
+    return poiu(match, [0, d])
 
   match = untwisted.partial(lkjh, re.match)
   search = untwisted.partial(lkjh, re.search)
@@ -185,7 +205,16 @@ class qwer:
         f = lambda match: replace(poiu(match, *filter(lambda itm: match.group(itm[0]), e)))
 
       else:
-        f = lambda match: replace(poiu(match, (0, d)))
+        f = iter(d)
+        g = iter(d[1:])
+        while True:
+          try:
+            f.next()[1].append(g.next())
+
+          except StopIteration:
+            break
+
+        f = lambda match: replace(poiu(match, [0, d]))
 
     else:
       f = replace
