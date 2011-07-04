@@ -5,6 +5,9 @@ __all__ = 'rule', 'qwer'
 def select(name, *args):
   for itm in args:
     if '+' == name[0]:
+      if name[1].endswith(':first-child'):
+        continue
+
       try:
         if name[1] == itm[2][0]:
           if 2 < len(name):
@@ -16,12 +19,28 @@ def select(name, *args):
           yield itm[2][1]
 
       except IndexError:
-        pass
+        continue
 
       continue
 
-    for itm in itm[1]:
-      if '>' == name[0]:
+    if '>' == name[0]:
+      if name[1].endswith(':first-child'):
+        try:
+          if 13 > len(name[1]) or name[1][:-12] == itm[1][0][0]:
+            if 2 < len(name):
+              for itm in select(name[2:], itm[1][0][1]):
+                yield itm
+
+              continue
+
+            yield itm[1][0][1]
+
+        except IndexError:
+          continue
+
+        continue
+
+      for itm in itm[1]:
         if name[1] == itm[0]:
           if 2 < len(name):
             for itm in select(name[2:], itm[1]):
@@ -31,8 +50,42 @@ def select(name, *args):
 
           yield itm[1]
 
+      continue
+
+    if name[0].endswith(':first-child'):
+      try:
+        if 13 > len(name[0]) or name[0][:-12] == itm[1][0][0]:
+          if 1 < len(name):
+            for a in select(name[1:], itm[1][0][1]):
+              yield a
+
+            for itm in itm[1][1:]:
+              for itm in select(name, itm[1]):
+                yield itm
+
+            continue
+
+          yield itm[1][0][1]
+
+          for a in select(name, itm[1][0][1]):
+            yield a
+
+          for itm in itm[1][1:]:
+            for itm in select(name, itm[1]):
+              yield itm
+
+          continue
+
+      except IndexError:
         continue
 
+      for itm in itm[1]:
+        for itm in select(name, itm[1]):
+          yield itm
+
+      continue
+
+    for itm in itm[1]:
       if name[0] == itm[0]:
         if 1 < len(name):
           for itm in select(name[1:], itm[1]):
