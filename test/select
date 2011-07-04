@@ -30,3 +30,18 @@ equiv(([6, []],),
 
 equiv(([1, [('a', [2, []])], b],),
   qwer.select(('b:first-child',), c))
+
+equiv(([4, [], a],),
+  qwer.select(('c', '>', 'a:first-child'), c))
+
+equiv((),
+  qwer.select(('a', '+', 'b:first-child'), c))
+
+equiv(([1, [('a', [2, []])], b], [2, []], [4, [], a], [6, []]),
+  qwer.select((':first-child',), c))
+
+equiv(([4, [], a],),
+  qwer.select(('c', '>', ':first-child'), c))
+
+equiv((),
+  qwer.select(('a', '+', ':first-child'), c))
