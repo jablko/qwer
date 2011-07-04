@@ -45,3 +45,27 @@ equiv(([4, [], a],),
 
 equiv((),
   qwer.select(('a', '+', ':first-child'), c))
+
+equiv(([1, [('a', [2, []])], b], [2, []], [3, [('a', [4, [], a]), a]], [4, [], a], [5, [('a', [6, []])]], [6, []]),
+  qwer.select(('*',), c))
+
+equiv(([4, [], a], [5, [('a', [6, []])]], [6, []]),
+  qwer.select(('c', '*'), c))
+
+equiv(([6, []],),
+  qwer.select(('c', '*', 'a'), c))
+
+equiv(([4, [], a], [5, [('a', [6, []])]]),
+  qwer.select(('c', '>', '*'), c))
+
+equiv(([6, []],),
+  qwer.select(('c', '>', '*', 'a'), c))
+
+equiv(([5, [('a', [6, []])]],),
+  qwer.select(('a', '+', '*'), c))
+
+equiv(([6, []],),
+  qwer.select(('a', '+', '*', 'a'), c))
+
+equiv(([1, [('a', [2, []])], b], [2, []], [4, [], a], [6, []]),
+  qwer.select(('*:first-child',), c))
