@@ -184,6 +184,24 @@ equal(['789'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['a + b a']))
 
 equal(['a789'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['a+b']))
 
+equal(['a123'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['b:first-child']))
+equal(['456'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['c > a:first-child']))
+
+try:
+  ok(False, d.match('a123a456a789xyz', '( a, b, c )')['a + b:first-child'])
+
+except KeyError:
+  ok(True)
+
+equal(['a123', '123', '456', '789'], map(str, d.match('a123a456a789xyz', '( a, b, c )')[':first-child']))
+equal(['456'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['c > :first-child']))
+
+try:
+  ok(False, d.match('a123a456a789xyz', '( a, b, c )')['a + :first-child'])
+
+except KeyError:
+  ok(True)
+
 e = ('b', [3, [('a', [4, []])]])
 
 equal((4,
