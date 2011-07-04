@@ -126,10 +126,22 @@ class poiu:
   __getattr__ = untwisted.partial(mnbv, AttributeError)
   __getitem__ = untwisted.partial(mnbv, KeyError)
 
-  __int__ = lambda ctx: int(ctx.match.group(ctx.args[0][0]))
+  def __int__(ctx):
+    try:
+      return int(ctx.match.group(ctx.args[0][0]))
+
+    except IndexError:
+      raise ValueError
+
   __len__ = lambda ctx: ctx.match.end(ctx.args[0][0]) - ctx.match.start(ctx.args[0][0])
   __nonzero__ = lambda ctx: bool(ctx.args)
-  __str__ = lambda ctx: ctx.match.group(ctx.args[0][0])
+
+  def __str__(ctx):
+    try:
+      return ctx.match.group(ctx.args[0][0])
+
+    except IndexError:
+      return ''
 
 class rule:
   def __init__(ctx, name):

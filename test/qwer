@@ -63,7 +63,7 @@ equal(789, int(d.match('a123a456a789xyz', 'c b a')))
 try:
   ok(False, int(d.match('a123a456xyz', 'bogus')))
 
-except IndexError:
+except ValueError:
   ok(True)
 
 # str()
@@ -73,11 +73,7 @@ equal('123', str(d.match('a123a456a789xyz', 'a')))
 equal('456', str(d.match('a123a456a789xyz', 'c a')))
 equal('789', str(d.match('a123a456a789xyz', 'c b a')))
 
-try:
-  ok(False, str(d.match('a123a456xyz', 'bogus')))
-
-except IndexError:
-  ok(True)
+equal('', str(d.match('a123a456xyz', 'bogus')))
 
 equal('456', str(d.match('a123a456xyz', 'a')[1]))
 
