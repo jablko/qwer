@@ -143,6 +143,8 @@ class poiu:
     except IndexError:
       return ''
 
+  join = lambda ctx, separator: separator.join(map(str, ctx))
+
 class rule:
   def __init__(ctx, name):
     ctx.namespace = sys._getframe().f_back.f_locals
