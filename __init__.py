@@ -155,37 +155,47 @@ class rule:
     b = False
     c = False
     for itm in args:
-      if ctx.name[-1] == itm[0]:
-        if isinstance(itm[-1], str):
-          if 1 < len(itm):
-            a.append(itm[1:])
+      #head, *rest = itm
+      head, rest = itm[0], itm[1:]
+      try:
+        #*d, e = rest
+        d, e = rest[:-1], rest[-1]
 
-          else:
-            group += 1
+      except IndexError:
+        #head, *rest = head
+        head, rest = head[0], head[1:]
+        if ctx.name[-1] == head:
+          if rest:
+            a.append((rest,))
 
-            a.append(itm)
+            continue
 
-            b = True
-
-        elif 2 < len(itm):
-          a.append(itm[1:])
-
-        else:
           group += 1
 
-          # list() to avoid AttributeError: 'tuple' object has no attribute 'append'
-          d = list(itm[:-1])
-          d.append(())
+          a.append(itm)
 
-          a.append(d)
+          b = True
 
-          a.extend(itm[-1])
+          continue
+
+      else:
+        if ctx.name[-1] == head:
+          if d:
+            a.append(rest)
+
+            continue
+
+          group += 1
+
+          a.append((head, ()))
+          a.extend(e)
 
           b = True
           c = True
 
-      else:
-        a.append(itm)
+          continue
+
+      a.append(itm)
 
     e = group
     group, pattern, f, g = qwer.compile(group, *a)
@@ -235,29 +245,42 @@ class qwer:
   def lkjh(ctx, jhgf, subject, *args):
     a = []
     b = False
+
+    # Guaranteed to match *any* string
+    pattern = re.compile('([^,]*?)\((.*?)\)|([^,]*)')
+
     for itm in args:
-      match = re.match('\((.+)\)|(.+?)(?:\((.+)\))?$', itm)
-      if match.group(1):
-        a.extend(map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', match.group(1))))
 
-      else:
-        c = map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', match.group(2)))
-
+      # Zero length match only between commas
+      match = pattern.match(itm)
+      while True:
         try:
-          d = re.split(',', match.group(3))
+          c = re.findall('\+|>|[^\s+>]+', match.group(1))
 
         except TypeError:
-          e = ()
+          c = re.findall('\+|>|[^\s+>]+', match.group(3))
+          c.append(())
+
+          a.append(c)
+
+          b = True
 
         else:
-          e = map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), d)
+          d = map(untwisted.compose(lambda *args: args, untwisted.partial(re.findall, '\+|>|[^\s+>]+')), re.split(',', match.group(2)))
+          if c:
+            c.append(d)
 
-        for itm in c:
-          itm.append(e)
+            a.append(c)
 
-        a.extend(c)
+            b = True
 
-        b = True
+          else:
+            a.extend(d)
+
+        if not len(itm) > match.end():
+          break
+
+        match = pattern.match(itm, match.end() + 1)
 
     _, pattern, d, e = ctx.compile(0, *a)
 
@@ -285,29 +308,42 @@ class qwer:
   def replace(ctx, replace, subject, *args, **kwds):
     a = []
     b = False
+
+    # Guaranteed to match *any* string
+    pattern = re.compile('([^,]*?)\((.*?)\)|([^,]*)')
+
     for itm in args:
-      match = re.match('\((.+)\)|(.+?)(?:\((.+)\))?$', itm)
-      if match.group(1):
-        a.extend(map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', match.group(1))))
 
-      else:
-        c = map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', match.group(2)))
-
+      # Zero length match only between commas
+      match = pattern.match(itm)
+      while True:
         try:
-          d = re.split(',', match.group(3))
+          c = re.findall('\+|>|[^\s+>]+', match.group(1))
 
         except TypeError:
-          e = ()
+          c = re.findall('\+|>|[^\s+>]+', match.group(3))
+          c.append(())
+
+          a.append(c)
+
+          b = True
 
         else:
-          e = map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), d)
+          d = map(untwisted.compose(lambda *args: args, untwisted.partial(re.findall, '\+|>|[^\s+>]+')), re.split(',', match.group(2)))
+          if c:
+            c.append(d)
 
-        for itm in c:
-          itm.append(e)
+            a.append(c)
 
-        a.extend(c)
+            b = True
 
-        b = True
+          else:
+            a.extend(d)
+
+        if not len(itm) > match.end():
+          break
+
+        match = pattern.match(itm, match.end() + 1)
 
     _, pattern, d, e = ctx.compile(0, *a)
 
