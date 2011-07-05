@@ -241,9 +241,21 @@ class qwer:
         a.extend(map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', match.group(1))))
 
       else:
-        c = re.findall('\+|>|[^\s+>]+', match.group(2))
-        c.append(map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', match.group(3))) if match.group(3) else ())
-        a.append(c)
+        c = map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', match.group(2)))
+
+        try:
+          d = re.split(',', match.group(3))
+
+        except TypeError:
+          e = ()
+
+        else:
+          e = map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), d)
+
+        for itm in c:
+          itm.append(e)
+
+        a.extend(c)
 
         b = True
 
@@ -279,9 +291,21 @@ class qwer:
         a.extend(map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', match.group(1))))
 
       else:
-        c = re.findall('\+|>|[^\s+>]+', match.group(2))
-        c.append(map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', match.group(3))) if match.group(3) else ())
-        a.append(c)
+        c = map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', match.group(2)))
+
+        try:
+          d = re.split(',', match.group(3))
+
+        except TypeError:
+          e = ()
+
+        else:
+          e = map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), d)
+
+        for itm in c:
+          itm.append(e)
+
+        a.extend(c)
 
         b = True
 
