@@ -3,6 +3,8 @@ import re, sys, untwisted
 __all__ = 'rule', 'qwer'
 
 def select(ctx, *args):
+  a = []
+
   try:
     itm = ctx[1][0]
 
@@ -10,7 +12,6 @@ def select(ctx, *args):
     pass
 
   else:
-    a = []
     b = True
     for name in args:
       #head, *rest = name
@@ -55,11 +56,15 @@ def select(ctx, *args):
 
         b = False
 
-    for itm in select(itm[1], *a):
-      yield itm
+    c = select(itm[1], *a)
+    try:
+      while True:
+        yield c.next()
+
+    except StopIteration as e:
+      a = list(e.args)
 
   for itm in ctx[1][1:]:
-    a = []
     b = True
     for name in args:
       #head, *rest = name
@@ -104,8 +109,13 @@ def select(ctx, *args):
 
         b = False
 
-    for itm in select(itm[1], *a):
-      yield itm
+    c = select(itm[1], *a)
+    try:
+      while True:
+        yield c.next()
+
+    except StopIteration as e:
+      a = list(e.args)
 
   try:
     itm = ctx[2]
@@ -137,8 +147,8 @@ def select(ctx, *args):
 
           b = False
 
-    for itm in select(itm[1], *a):
-      yield itm
+    #return ...
+    raise StopIteration(*a)
 
 class poiu:
   __metaclass__ = type
