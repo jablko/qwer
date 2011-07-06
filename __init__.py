@@ -2,106 +2,143 @@ import re, sys, untwisted
 
 __all__ = 'rule', 'qwer'
 
-def select(name, *args):
-  for itm in args:
-    if '+' == name[0]:
-      if name[1].endswith(':first-child'):
+def select(ctx, *args):
+  try:
+    itm = ctx[1][0]
+
+  except IndexError:
+    pass
+
+  else:
+    a = []
+    b = True
+    for name in args:
+      #head, *rest = name
+      head, rest = name[0], name[1:]
+
+      if '+' == head:
         continue
 
-      try:
-        if '*' == name[1] or name[1] == itm[2][0]:
-          if 2 < len(name):
-            for itm in select(name[2:], itm[2][1]):
-              yield itm
+      if '>' == head:
+        #head, *rest = rest
+        head, rest = rest[0], rest[1:]
 
-            continue
-
-          yield itm[2][1]
-
-      except IndexError:
-        continue
-
-      continue
-
-    if '>' == name[0]:
-      if name[1].endswith(':first-child'):
-        try:
-          if 13 > len(name[1]) or '*' == name[1][:-12] or name[1][:-12] == itm[1][0][0]:
-            if 2 < len(name):
-              for itm in select(name[2:], itm[1][0][1]):
-                yield itm
-
-              continue
-
-            yield itm[1][0][1]
-
-        except IndexError:
+        if (not head.endswith(':first-child') or 12 < len(head) and '*' != head[:-12] and head[:-12] != itm[0]) and '*' != head and head != itm[0]:
           continue
 
-        continue
+        if rest:
+          a.append(rest)
 
-      for itm in itm[1]:
-        if '*' == name[1] or name[1] == itm[0]:
-          if 2 < len(name):
-            for itm in select(name[2:], itm[1]):
-              yield itm
+          continue
 
-            continue
-
+        if b:
           yield itm[1]
 
-      continue
+          b = False
 
-    if name[0].endswith(':first-child'):
-      try:
-        if 13 > len(name[0]) or '*' == name[0][:-12] or name[0][:-12] == itm[1][0][0]:
-          if 1 < len(name):
-            for a in select(name[1:], itm[1][0][1]):
-              yield a
-
-            for itm in itm[1][1:]:
-              for itm in select(name, itm[1]):
-                yield itm
-
-            continue
-
-          yield itm[1][0][1]
-
-          for a in select(name, itm[1][0][1]):
-            yield a
-
-          for itm in itm[1][1:]:
-            for itm in select(name, itm[1]):
-              yield itm
-
-          continue
-
-      except IndexError:
         continue
 
-      for itm in itm[1]:
-        for itm in select(name, itm[1]):
-          yield itm
+      if (not head.endswith(':first-child') or 12 < len(head) and '*' != head[:-12] and head[:-12] != itm[0]) and '*' != head and head != itm[0]:
+        a.append(name)
 
-      continue
+        continue
 
-    for itm in itm[1]:
-      if '*' == name[0] or name[0] == itm[0]:
-        if 1 < len(name):
-          for itm in select(name[1:], itm[1]):
-            yield itm
+      if rest:
+        a.append(rest)
 
-          continue
+        continue
 
+      a.append(name)
+
+      if b:
         yield itm[1]
 
-        for itm in select(name, itm[1]):
-          yield itm
+        b = False
+
+    for itm in select(itm[1], *a):
+      yield itm
+
+  for itm in ctx[1][1:]:
+    a = []
+    b = True
+    for name in args:
+      #head, *rest = name
+      head, rest = name[0], name[1:]
+
+      if '+' == head:
+        continue
+
+      if '>' == head:
+        #head, *rest = rest
+        head, rest = rest[0], rest[1:]
+
+        if head.endswith(':first-child') or '*' != head and head != itm[0]:
+          continue
+
+        if rest:
+          a.append(rest)
+
+          continue
+
+        if b:
+          yield itm[1]
+
+          b = False
 
         continue
 
-      for itm in select(name, itm[1]):
-        yield itm
+      if head.endswith(':first-child') or '*' != head and head != itm[0]:
+        a.append(name)
+
+        continue
+
+      if rest:
+        a.append(rest)
+
+        continue
+
+      a.append(name)
+
+      if b:
+        yield itm[1]
+
+        b = False
+
+    for itm in select(itm[1], *a):
+      yield itm
+
+  try:
+    itm = ctx[2]
+
+  except IndexError:
+    pass
+
+  else:
+    a = []
+    b = True
+    for name in args:
+      #head, *rest = name
+      head, rest = name[0], name[1:]
+
+      if '+' == head:
+        #head, *rest = rest
+        head, rest = rest[0], rest[1:]
+
+        if head.endswith(':first-child') or '*' != head and head != itm[0]:
+          continue
+
+        if rest:
+          a.append(rest)
+
+          continue
+
+        if b:
+          yield itm[1]
+
+          b = False
+
+    for itm in select(itm[1], *a):
+      yield itm
 
 class poiu:
   __metaclass__ = type
@@ -112,12 +149,15 @@ class poiu:
 
   def mnbv(ctx, e, name):
     try:
-      name = re.findall('\+|>|[^\s+>]+', name)
+      name = map(untwisted.partial(re.findall, '\+|>|[^\s+>]+'), re.split(',', name))
 
     except TypeError:
       return poiu(ctx.match, ctx.args[name])
 
-    a = list(select(name, *ctx.args))
+    a = []
+    for itm in ctx.args:
+      a.extend(select(itm, *name))
+
     if not a:
       raise e
 

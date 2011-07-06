@@ -8,64 +8,67 @@ b = ('c', [3, [('a', [4, [], a]), a]])
 c = [0, [('b', [1, [('a', [2, []])], b]), b]]
 
 equiv(([2, []], [4, [], a], [6, []]),
-  qwer.select(('a',), c))
+  qwer.select(c, ('a',)))
 
 equiv(([4, [], a], [6, []]),
-  qwer.select(('c', 'a'), c))
+  qwer.select(c, ('c', 'a')))
 
 equiv(([6, []],),
-  qwer.select(('c', 'b', 'a'), c))
-
-equiv(([4, [], a],),
-  qwer.select(('c', '>', 'a'), c))
-
-equiv(([6, []],),
-  qwer.select(('c', '>', 'b', 'a'), c))
-
-equiv(([5, [('a', [6, []])]],),
-  qwer.select(('a', '+', 'b'), c))
-
-equiv(([6, []],),
-  qwer.select(('a', '+', 'b', 'a'), c))
-
-equiv(([1, [('a', [2, []])], b],),
-  qwer.select(('b:first-child',), c))
-
-equiv(([4, [], a],),
-  qwer.select(('c', '>', 'a:first-child'), c))
-
-equiv((),
-  qwer.select(('a', '+', 'b:first-child'), c))
-
-equiv(([1, [('a', [2, []])], b], [2, []], [4, [], a], [6, []]),
-  qwer.select((':first-child',), c))
-
-equiv(([4, [], a],),
-  qwer.select(('c', '>', ':first-child'), c))
-
-equiv((),
-  qwer.select(('a', '+', ':first-child'), c))
+  qwer.select(c, ('c', 'b', 'a')))
 
 equiv(([1, [('a', [2, []])], b], [2, []], [3, [('a', [4, [], a]), a]], [4, [], a], [5, [('a', [6, []])]], [6, []]),
-  qwer.select(('*',), c))
+  qwer.select(c, ('a',), ('b',), ('c',)))
 
-equiv(([4, [], a], [5, [('a', [6, []])]], [6, []]),
-  qwer.select(('c', '*'), c))
-
-equiv(([6, []],),
-  qwer.select(('c', '*', 'a'), c))
-
-equiv(([4, [], a], [5, [('a', [6, []])]]),
-  qwer.select(('c', '>', '*'), c))
+equiv(([4, [], a],),
+  qwer.select(c, ('c', '>', 'a')))
 
 equiv(([6, []],),
-  qwer.select(('c', '>', '*', 'a'), c))
+  qwer.select(c, ('c', '>', 'b', 'a')))
 
 equiv(([5, [('a', [6, []])]],),
-  qwer.select(('a', '+', '*'), c))
+  qwer.select(c, ('a', '+', 'b')))
 
 equiv(([6, []],),
-  qwer.select(('a', '+', '*', 'a'), c))
+  qwer.select(c, ('a', '+', 'b', 'a')))
+
+equiv(([1, [('a', [2, []])], b],),
+  qwer.select(c, ('b:first-child',)))
+
+equiv(([4, [], a],),
+  qwer.select(c, ('c', '>', 'a:first-child')))
+
+equiv((),
+  qwer.select(c, ('a', '+', 'b:first-child')))
 
 equiv(([1, [('a', [2, []])], b], [2, []], [4, [], a], [6, []]),
-  qwer.select(('*:first-child',), c))
+  qwer.select(c, (':first-child',)))
+
+equiv(([4, [], a],),
+  qwer.select(c, ('c', '>', ':first-child')))
+
+equiv((),
+  qwer.select(c, ('a', '+', ':first-child')))
+
+equiv(([1, [('a', [2, []])], b], [2, []], [3, [('a', [4, [], a]), a]], [4, [], a], [5, [('a', [6, []])]], [6, []]),
+  qwer.select(c, ('*',)))
+
+equiv(([4, [], a], [5, [('a', [6, []])]], [6, []]),
+  qwer.select(c, ('c', '*')))
+
+equiv(([6, []],),
+  qwer.select(c, ('c', '*', 'a')))
+
+equiv(([4, [], a], [5, [('a', [6, []])]]),
+  qwer.select(c, ('c', '>', '*')))
+
+equiv(([6, []],),
+  qwer.select(c, ('c', '>', '*', 'a')))
+
+equiv(([5, [('a', [6, []])]],),
+  qwer.select(c, ('a', '+', '*')))
+
+equiv(([6, []],),
+  qwer.select(c, ('a', '+', '*', 'a')))
+
+equiv(([1, [('a', [2, []])], b], [2, []], [4, [], a], [6, []]),
+  qwer.select(c, ('*:first-child',)))
