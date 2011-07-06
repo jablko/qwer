@@ -178,6 +178,8 @@ try:
 except KeyError:
   ok(True)
 
+equal(['a123', '123', 'a456a789', '456', 'a789', '789'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['a, b, c']))
+
 equal(['456'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['c > a']))
 equal(['789'], map(str, d.match('a123a456a789xyz', '( a, b, c )')['c > b a']))
 
