@@ -3,8 +3,6 @@ import re, sys, untwisted
 __all__ = 'rule', 'qwer'
 
 def select(ctx, *args):
-  a = []
-
   try:
     itm = ctx[1][0]
 
@@ -12,6 +10,7 @@ def select(ctx, *args):
     pass
 
   else:
+    a = []
     b = True
     for name in args:
       #head, *rest = name
@@ -64,20 +63,37 @@ def select(ctx, *args):
     except StopIteration as e:
       a = list(e.args)
 
-  for itm in ctx[1][1:]:
-    b = True
-    for name in args:
-      #head, *rest = name
-      head, rest = name[0], name[1:]
+    for itm in ctx[1][1:]:
+      b = True
+      for name in args:
+        #head, *rest = name
+        head, rest = name[0], name[1:]
 
-      if '+' == head:
-        continue
+        if '+' == head:
+          continue
 
-      if '>' == head:
-        #head, *rest = rest
-        head, rest = rest[0], rest[1:]
+        if '>' == head:
+          #head, *rest = rest
+          head, rest = rest[0], rest[1:]
+
+          if head.endswith(':first-child') or '*' != head and head != itm[0]:
+            continue
+
+          if rest:
+            a.append(rest)
+
+            continue
+
+          if b:
+            yield itm[1]
+
+            b = False
+
+          continue
 
         if head.endswith(':first-child') or '*' != head and head != itm[0]:
+          a.append(name)
+
           continue
 
         if rest:
@@ -85,37 +101,20 @@ def select(ctx, *args):
 
           continue
 
+        a.append(name)
+
         if b:
           yield itm[1]
 
           b = False
 
-        continue
+      c = select(itm[1], *a)
+      try:
+        while True:
+          yield c.next()
 
-      if head.endswith(':first-child') or '*' != head and head != itm[0]:
-        a.append(name)
-
-        continue
-
-      if rest:
-        a.append(rest)
-
-        continue
-
-      a.append(name)
-
-      if b:
-        yield itm[1]
-
-        b = False
-
-    c = select(itm[1], *a)
-    try:
-      while True:
-        yield c.next()
-
-    except StopIteration as e:
-      a = list(e.args)
+      except StopIteration as e:
+        a = list(e.args)
 
   try:
     itm = ctx[2]
