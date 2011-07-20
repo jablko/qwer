@@ -1,0 +1,107 @@
+#!/usr/bin/env python
+
+from qwer import *
+from testify import *
+
+equal((0,
+  '(?:\d\d\d)*',
+  [],
+  []), repetition('\d\d\d').zxcv(0, '', ''))
+
+equal((0,
+  '(?:\d\d\d)+',
+  [],
+  []), repetition('\d\d\d', min=1).zxcv(0, '', ''))
+
+equal((0,
+  '(?:\d\d\d){2,}',
+  [],
+  []), repetition('\d\d\d', min=2).zxcv(0, '', ''))
+
+equal((0,
+  '(?:\d\d\d){,2}',
+  [],
+  []), repetition('\d\d\d', max=2).zxcv(0, '', ''))
+
+equal((0,
+  '(?:\d\d\d){1,2}',
+  [],
+  []), repetition('\d\d\d', min=1, max=2).zxcv(0, '', ''))
+
+equal((0,
+  '(?:\d\d\d){2}',
+  [],
+  []), repetition('\d\d\d', min=2, max=2).zxcv(0, '', ''))
+
+a = qwer('\d\d\d')
+b = qwer('a', repetition(rule('a')))
+
+equal((0,
+  'a(?:\d\d\d)*',
+  [],
+  []), b.zxcv(0, '', ''))
+
+equal('a123', str(b.match('a123xyz')))
+equal('a123456789', str(b.match('a123456789xyz')))
+equal('a', str(b.match('axyz')))
+
+group, pattern, c, d = b.zxcv(0, '', 'a123xyz', ('a', ()))
+
+equal(0, group)
+
+equal('', pattern)
+
+equal(1, len(c))
+equal(2, len(c[0]))
+equal('a', c[0][0])
+equal(1, c[0][1].group)
+equal((), c[0][1].args)
+ok(hasattr(c[0][1], 'match'), c[0][1])
+
+equal(1, len(d))
+equal(1, d[0].group)
+equal((), d[0].args)
+ok(hasattr(d[0], 'match'), d[0])
+
+group, pattern, c, d = b.zxcv(0, '', 'a123456789xyz', ('a', ()))
+
+equal(0, group)
+
+equal('', pattern)
+
+equal(3, len(c))
+equal(2, len(c[0]))
+equal('a', c[0][0])
+equal(1, c[0][1].group)
+equal((), c[0][1].args)
+ok(hasattr(c[0][1], 'match'), c[0][1])
+equal(2, len(c[1]))
+equal('a', c[1][0])
+equal(1, c[1][1].group)
+equal((), c[1][1].args)
+ok(hasattr(c[1][1], 'match'), c[1][1])
+equal(2, len(c[2]))
+equal('a', c[2][0])
+equal(1, c[2][1].group)
+equal((), c[2][1].args)
+ok(hasattr(c[2][1], 'match'), c[2][1])
+
+equal(3, len(d))
+equal(1, d[0].group)
+equal((), d[0].args)
+ok(hasattr(d[0], 'match'), d[0])
+equal(1, d[1].group)
+equal((), d[1].args)
+ok(hasattr(d[1], 'match'), d[1])
+equal(1, d[2].group)
+equal((), d[2].args)
+ok(hasattr(d[2], 'match'), d[2])
+
+equal((0,
+  '',
+  [],
+  []), b.zxcv(0, '', 'axyz', ('a', ())))
+
+equal(['123'], map(str, b.match('a123xyz', 'a')))
+equal(['123', '456', '789'], map(str, b.match('a123456789xyz', 'a')))
+equal([], map(str, b.match('axyz', 'a')))
