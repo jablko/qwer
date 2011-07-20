@@ -229,11 +229,12 @@ class qwer:
     ctx.args = args
 
   def zxcv(ctx, group, pattern, subject, *args):
+    start = 0
     a = []
     b = []
     for itm in ctx.args:
       try:
-        group, pattern, c, d = itm.zxcv(group, pattern, subject, *args)
+        group, pattern, start, c, d = itm.zxcv(group, pattern, subject, *args)
 
       except AttributeError:
         pattern += itm
@@ -242,7 +243,7 @@ class qwer:
         a.extend(c)
         b.extend(d)
 
-    return group, pattern, a, b
+    return group, pattern, start, a, b
 
   def lkjh(ctx, jhgf, subject, *args):
     a = []
@@ -284,9 +285,9 @@ class qwer:
 
         match = pattern.match(itm, match.end() + 1)
 
-    _, pattern, d, e = ctx.zxcv(0, '', subject, *a)
+    _, pattern, start, d, e = ctx.zxcv(0, '', subject, *a)
 
-    match = jhgf(pattern, subject)
+    match = jhgf(re.compile(pattern))(subject, start)
     if not match:
       raise ValueError
 
@@ -307,8 +308,8 @@ class qwer:
 
     return poiu(asdf(0, *d, match=match))
 
-  match = untwisted.partial(lkjh, re.match)
-  search = untwisted.partial(lkjh, re.search)
+  match = untwisted.partial(lkjh, lambda pattern: pattern.match)
+  search = untwisted.partial(lkjh, lambda pattern: pattern.search)
 
   def replace(ctx, replace, subject, *args, **kwds):
     a = []
@@ -350,7 +351,7 @@ class qwer:
 
         match = pattern.match(itm, match.end() + 1)
 
-    _, pattern, d, e = ctx.zxcv(0, '', subject, *a)
+    _, pattern, start, d, e = ctx.zxcv(0, '', subject, *a)
 
     if callable(replace):
       if b:
@@ -389,7 +390,7 @@ class repetition(qwer):
   def zxcv(ctx, group, pattern, subject, *args):
     count = 0
 
-    group, a, b, c = qwer.zxcv(ctx, group, pattern, subject, *args)
+    group, a, start, b, c = qwer.zxcv(ctx, group, pattern, subject, *args)
 
     if b:
       if ctx.kwds.get('min'):
@@ -406,16 +407,19 @@ class repetition(qwer):
       if not match:
         raise ValueError
 
-      d = match
-      while True:
-        group, pattern, e, f = qwer.zxcv(ctx, 0, '', subject, *args)
+      start = match.end()
 
-        d = re.compile(pattern).match(subject, d.end())
+      while True:
+        group, pattern, _, e, f = qwer.zxcv(ctx, 0, '', subject, *args)
+
+        d = re.compile(pattern).match(subject, start)
         if not d:
           if ctx.kwds.get('min') > count:
             raise ValueError
 
           break
+
+        start = d.end()
 
         # To capture all repetitions of groups we may need multiple matches, so
         # we need a time and space efficient representation of which match each
@@ -443,7 +447,7 @@ class repetition(qwer):
         except KeyError:
           pass
 
-      return 0, '', b, c
+      return 0, '', start, b, c
 
     pattern += '(?:' + a[len(pattern):]
     try:
@@ -472,7 +476,7 @@ class repetition(qwer):
         except KeyError:
           pattern += ')*'
 
-    return group, pattern, b, c
+    return group, pattern, start, b, c
 
 class rule(qwer):
   def __init__(ctx, name):
@@ -533,7 +537,7 @@ class rule(qwer):
     if b:
       pattern += '('
 
-    group, pattern, f, g = qwer.zxcv(group, pattern, subject, *a)
+    group, pattern, start, f, g = qwer.zxcv(group, pattern, subject, *a)
 
     if b:
       h = iter(f)
@@ -550,6 +554,6 @@ class rule(qwer):
       if c:
         g.insert(0, h)
 
-      return group, pattern + ')', [(ctx.name[-1], h)], g
+      return group, pattern + ')', start, [(ctx.name[-1], h)], g
 
-    return group, pattern, f, g
+    return group, pattern, start, f, g

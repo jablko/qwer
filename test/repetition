@@ -5,51 +5,60 @@ from testify import *
 
 equal((0,
   '(?:\d\d\d)*',
+  0,
   [],
   []), repetition('\d\d\d').zxcv(0, '', ''))
 
 equal((0,
   '(?:\d\d\d)+',
+  0,
   [],
   []), repetition('\d\d\d', min=1).zxcv(0, '', ''))
 
 equal((0,
   '(?:\d\d\d){2,}',
+  0,
   [],
   []), repetition('\d\d\d', min=2).zxcv(0, '', ''))
 
 equal((0,
   '(?:\d\d\d){,2}',
+  0,
   [],
   []), repetition('\d\d\d', max=2).zxcv(0, '', ''))
 
 equal((0,
   '(?:\d\d\d){1,2}',
+  0,
   [],
   []), repetition('\d\d\d', min=1, max=2).zxcv(0, '', ''))
 
 equal((0,
   '(?:\d\d\d){2}',
+  0,
   [],
   []), repetition('\d\d\d', min=2, max=2).zxcv(0, '', ''))
 
 a = qwer('\d\d\d')
-b = qwer('a', repetition(rule('a')))
+b = qwer('a', repetition(rule('a')), 'b')
 
 equal((0,
-  'a(?:\d\d\d)*',
+  'a(?:\d\d\d)*b',
+  0,
   [],
   []), b.zxcv(0, '', ''))
 
-equal('a123', str(b.match('a123xyz')))
-equal('a123456789', str(b.match('a123456789xyz')))
-equal('a', str(b.match('axyz')))
+equal('a123b', str(b.match('a123bxyz')))
+equal('a123456789b', str(b.match('a123456789bxyz')))
+equal('ab', str(b.match('abxyz')))
 
-group, pattern, c, d = b.zxcv(0, '', 'a123xyz', ('a', ()))
+group, pattern, start, c, d = b.zxcv(0, '', 'a123bxyz', ('a', ()))
 
 equal(0, group)
 
-equal('', pattern)
+equal('b', pattern)
+
+equal(4, start)
 
 equal(1, len(c))
 equal(2, len(c[0]))
@@ -63,11 +72,13 @@ equal(1, d[0].group)
 equal((), d[0].args)
 ok(hasattr(d[0], 'match'), d[0])
 
-group, pattern, c, d = b.zxcv(0, '', 'a123456789xyz', ('a', ()))
+group, pattern, start, c, d = b.zxcv(0, '', 'a123456789bxyz', ('a', ()))
 
 equal(0, group)
 
-equal('', pattern)
+equal('b', pattern)
+
+equal(10, start)
 
 equal(3, len(c))
 equal(2, len(c[0]))
@@ -98,10 +109,11 @@ equal((), d[2].args)
 ok(hasattr(d[2], 'match'), d[2])
 
 equal((0,
-  '',
+  'b',
+  1,
   [],
-  []), b.zxcv(0, '', 'axyz', ('a', ())))
+  []), b.zxcv(0, '', 'abxyz', ('a', ())))
 
-equal(['123'], map(str, b.match('a123xyz', 'a')))
-equal(['123', '456', '789'], map(str, b.match('a123456789xyz', 'a')))
-equal([], map(str, b.match('axyz', 'a')))
+equal(['123'], map(str, b.match('a123bxyz', 'a')))
+equal(['123', '456', '789'], map(str, b.match('a123456789bxyz', 'a')))
+equal([], map(str, b.match('abxyz', 'a')))

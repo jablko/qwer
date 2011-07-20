@@ -10,6 +10,7 @@ d = qwer.qwer('(?:', qwer.rule('b'), ')?', qwer.rule('c'))
 
 equal((0,
   '(?:a\d\d\d)?a\d\d\da\d\d\d',
+  0,
   [],
   []), d.zxcv(0, '', ''))
 
@@ -35,21 +36,25 @@ except ValueError:
 
 equiv((3,
   '(?:a(\d\d\d))?a(\d\d\d)a(\d\d\d)',
+  0,
   [('a', qwer.asdf(1)), ('a', qwer.asdf(2)), ('a', qwer.asdf(3))],
   [qwer.asdf(1), qwer.asdf(2), qwer.asdf(3)]), d.zxcv(0, '', '', ('a', ())))
 
 equiv((2,
   '(?:a\d\d\d)?a(\d\d\d)a(\d\d\d)',
+  0,
   [('a', qwer.asdf(1)), ('a', qwer.asdf(2))],
   [qwer.asdf(1), qwer.asdf(2)]), d.zxcv(0, '', '', ('c', 'a', ())))
 
 equiv((1,
   '(?:a\d\d\d)?a\d\d\da(\d\d\d)',
+  0,
   [('a', qwer.asdf(1))],
   [qwer.asdf(1)]), d.zxcv(0, '', '', ('c', 'b', 'a', ())))
 
 equal((0,
   '(?:a\d\d\d)?a\d\d\da\d\d\d',
+  0,
   [],
   []), d.zxcv(0, '', '', ('bogus', ())))
 
@@ -102,6 +107,7 @@ e = ('b', qwer.asdf(5, ('a', qwer.asdf(6))))
 
 equiv((6,
   '(?:(a(\d\d\d)))?(a(\d\d\d)(a(\d\d\d)))',
+  0,
   [('b', qwer.asdf(1, ('a', qwer.asdf(2)))), ('c', qwer.asdf(3, ('a', qwer.asdf(4, sibling=e)), e))],
   [qwer.asdf(1, ('a', qwer.asdf(2))), qwer.asdf(2), qwer.asdf(3, ('a', qwer.asdf(4, sibling=e)), e), qwer.asdf(4, sibling=e), qwer.asdf(5, ('a', qwer.asdf(6))), qwer.asdf(6)]), d.zxcv(0, '', '', ('a', ()), ('b', ()), ('c', ())))
 
@@ -110,6 +116,7 @@ equal(['a123', '123', 'a456a789', '456', 'a789', '789'], map(str, d.match('a123a
 
 equiv((6,
   '(?:(a(\d\d\d)))?(a(\d\d\d)(a(\d\d\d)))',
+  0,
   [('b', qwer.asdf(1, ('a', qwer.asdf(2)))), ('c', qwer.asdf(3, ('a', qwer.asdf(4, sibling=e)), e))],
   []), d.zxcv(0, '', '', (('a',),), (('b',),), (('c',),)))
 
@@ -221,6 +228,7 @@ e = ('b', qwer.asdf(3, ('a', qwer.asdf(4))))
 
 equiv((4,
   '(?:a\d\d\d)?(a(\d\d\d)(a(\d\d\d)))',
+  0,
   [('c', qwer.asdf(1, ('a', qwer.asdf(2, sibling=e)), e))],
   [qwer.asdf(1, ('a', qwer.asdf(2, sibling=e)), ('b', qwer.asdf(3, ('a', qwer.asdf(4)))))]), d.zxcv(0, '', '', ('c', ((('b',),), (('a',),)))))
 
